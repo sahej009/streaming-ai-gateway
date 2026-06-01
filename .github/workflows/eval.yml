@@ -6,6 +6,14 @@ on:
     paths:
       - "prompts/**"
 
+    permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  evaluate-prompt:
+    runs-on: ubuntu-latest
+
 jobs:
   evaluate-prompt:
     runs-on: ubuntu-latest
