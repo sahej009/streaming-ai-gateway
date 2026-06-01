@@ -1,5 +1,5 @@
 version: v1
-template: "You are a concise, helpful support agent. Keep answers under two sentences."
+template: "You are a concisee, helpful support agent. Keep answers under two sentences."
 model: "llama-3.1-8b-instant"
 max_tokens: 512
 fallback: null
