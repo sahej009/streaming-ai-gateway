@@ -1,0 +1,58 @@
+{
+  "aggregate": {
+    "faithfulness": 0.07777777777777778,
+    "answer_relevancy": 0.0
+  },
+  "details": [
+    {
+      "user_input": "How do I reset my Acme Cloud password?",
+      "retrieved_contexts": [
+        "Users can reset their password by visiting the login page and clicking 'Forgot Password'. An email will be sent with a reset link valid for 15 minutes. Support agents cannot manually reset passwords for security reasons."
+      ],
+      "response": "To reset your Acme Cloud password, follow these steps:1. Go to the Acme Cloud login page.2. Click on the 'Forgot Password' link below the login form.3. Enter your email address associated with your Acme Cloud account.4. Click 'Send Reset Link.'5. Check your email for a password reset email from Acme Cloud.6. Click on the password reset link in the email and enter a new password.7. Follow the on-screen instructions to confirm the new password.If you need further assistance, please provide your email address associated with the account.",
+      "reference": "You can reset your password by clicking 'Forgot Password' on the login page. You will receive an email with a reset link that is valid for 15 minutes. For security reasons, support agents cannot do this for you.",
+      "faithfulness": 0.0,
+      "answer_relevancy": 0.0
+    },
+    {
+      "user_input": "What is your refund policy?",
+      "retrieved_contexts": [
+        "Acme Cloud offers a strict 14-day money-back guarantee for all new annual subscriptions. Monthly subscriptions are non-refundable. To request a refund, users must email billing@acmecloud.com."
+      ],
+      "response": "Our refund policy is as follows:1. Eligible items: Refunds are available for products that are defective, not as described, or not received as ordered.2. Timeframe: Refunds must be requested within 30 days of delivery.3. Process: To initiate a refund, contact our support team with your order number and a detailed description of the issue.4. Returns: Return the item in its original condition, with all accessories and documentation included.5. Refund amount: Refund will be processed in the original payment method, minus any shipping or restocking fees.6. Exceptions: No refunds for change of mind or final sale items.7. Refund timeline: Refunds are typically processed within 5-7 business days after receiving the returned item.For more detailed information, please review our full refund policy on our website or contact our support team for assistance.",
+      "reference": "We offer a 14-day money-back guarantee for new annual subscriptions. Monthly subscriptions are non-refundable. Please email billing@acmecloud.com to request your refund.",
+      "faithfulness": 0.0,
+      "answer_relevancy": 0.0
+    },
+    {
+      "user_input": "Why am I getting a 502 Bad Gateway error?",
+      "retrieved_contexts": [
+        "A 502 Bad Gateway error usually means our edge routers cannot reach your specific server container. This happens if your server is currently restarting, or if your application crashed and the port is no longer open."
+      ],
+      "response": "A 502 Bad Gateway error typically occurs when your web server receives an invalid response from another server it trusted to handle the request. It can be caused by various factors, including:1. **Overloaded or unresponsive upstream server**: If the server that your server communicates with is experiencing high traffic or is down, it may return an invalid response, leading to a 502 error.2. **Incorrect configuration**: Your server's configuration might not be set up correctly to handle certain requests, leading to errors.3. **Software or plugin issues**: Issues with the software or plugins installed on your server might cause errors like a 502 Bad Gateway error.To troubleshoot this error, you can try the following steps:1. **Check your server logs**: Analyze the logs to see if there are any error messages related to the 502 error.2. **Verify server status**: Ensure that the upstream server you're communicating with is up and running.3. **Review configuration settings**: Double-check your server's configuration settings to ensure they're correct.4. **Restart your server**: Restarting your server might resolve the issue temporarily.If you're still encountering the issue, I can provide more information or help with troubleshooting specific steps if you provide details about your setup.",
+      "reference": "A 502 Bad Gateway error means our routers can't reach your server. This usually happens if your server is restarting or if your application has crashed and closed its network port.",
+      "faithfulness": 0.3888888888888889,
+      "answer_relevancy": 0.0
+    },
+    {
+      "user_input": "How often do you back up my database?",
+      "retrieved_contexts": [
+        "All Managed PostgreSQL databases are automatically backed up every 12 hours. Backups are retained for 7 days on the standard plan, and 30 days on the enterprise plan."
+      ],
+      "response": "As a conversational AI, I don't have have direct access to your database. I'm a cloud-based service that stores conversation data for our current session. I don't store any data after the conversation is closed.However, I can suggest that you regularly back up your data using your hosting provider's tools or external backup services, especially if you're using a self-hosted database. It's a good practice to maintain data security and integrity.",
+      "reference": "Managed PostgreSQL databases are automatically backed up every 12 hours. These backups are kept for 7 days on the standard plan, and 30 days if you are on the enterprise plan.",
+      "faithfulness": 0.0,
+      "answer_relevancy": 0.0
+    },
+    {
+      "user_input": "Can I upgrade my server RAM without downtime?",
+      "retrieved_contexts": [
+        "Upgrading server RAM requires a hard reboot of the virtual machine. This results in approximately 2 to 5 minutes of downtime. There is no way to hot-swap RAM on Acme Cloud currently."
+      ],
+      "response": "Upgrading server RAM without downtime is possible, but it depends on the type of RAM and server architecture.1. **Same type and speed RAM**: If the new RAM is identical in speed and type to the existing RAM, you can simply swap it in while your server is running. This is known as a \"hot swap.\"2. **Dual-socket servers**: If your server has multiple CPU sockets, you can add more RAM sticks or upgrade individual slots without affecting the entire machine.3. **Servers with removable RAM trays**: Some servers have easily removable RAM trays. In this case, you can pull the existing RAM, add new RAM, and snap the tray back in place.However, if your server has:1. **Soldered RAM**: You'll need to shut down the server for upgrade.2. **Single-socket servers or non-hot-swappable systems**: Upgrades might require a shutdown, especially if new RAM has different specifications.Before starting any upgrade, consult your server's documentation or manufacturer support to confirm compatibility, ensure safe handling, and follow any specific guidelines for minimizing or eliminating downtime.",
+      "reference": "No, upgrading your server RAM requires a hard reboot, which will result in about 2 to 5 minutes of downtime. We do not currently support hot-swapping RAM.",
+      "faithfulness": 0.0,
+      "answer_relevancy": 0.0
+    }
+  ]
+}

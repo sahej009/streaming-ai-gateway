@@ -1,0 +1,32 @@
+[
+  {
+    "question": "How do I reset my Acme Cloud password?",
+    "context": "Users can reset their password by visiting the login page and clicking 'Forgot Password'. An email will be sent with a reset link valid for 15 minutes. Support agents cannot manually reset passwords for security reasons.",
+    "expected_answer": "You can reset your password by clicking 'Forgot Password' on the login page. You will receive an email with a reset link that is valid for 15 minutes. For security reasons, support agents cannot do this for you.",
+    "min_faithfulness_score": 0.8
+  },
+  {
+    "question": "What is your refund policy?",
+    "context": "Acme Cloud offers a strict 14-day money-back guarantee for all new annual subscriptions. Monthly subscriptions are non-refundable. To request a refund, users must email billing@acmecloud.com.",
+    "expected_answer": "We offer a 14-day money-back guarantee for new annual subscriptions. Monthly subscriptions are non-refundable. Please email billing@acmecloud.com to request your refund.",
+    "min_faithfulness_score": 0.8
+  },
+  {
+    "question": "Why am I getting a 502 Bad Gateway error?",
+    "context": "A 502 Bad Gateway error usually means our edge routers cannot reach your specific server container. This happens if your server is currently restarting, or if your application crashed and the port is no longer open.",
+    "expected_answer": "A 502 Bad Gateway error means our routers can't reach your server. This usually happens if your server is restarting or if your application has crashed and closed its network port.",
+    "min_faithfulness_score": 0.75
+  },
+  {
+    "question": "How often do you back up my database?",
+    "context": "All Managed PostgreSQL databases are automatically backed up every 12 hours. Backups are retained for 7 days on the standard plan, and 30 days on the enterprise plan.",
+    "expected_answer": "Managed PostgreSQL databases are automatically backed up every 12 hours. These backups are kept for 7 days on the standard plan, and 30 days if you are on the enterprise plan.",
+    "min_faithfulness_score": 0.9
+  },
+  {
+    "question": "Can I upgrade my server RAM without downtime?",
+    "context": "Upgrading server RAM requires a hard reboot of the virtual machine. This results in approximately 2 to 5 minutes of downtime. There is no way to hot-swap RAM on Acme Cloud currently.",
+    "expected_answer": "No, upgrading your server RAM requires a hard reboot, which will result in about 2 to 5 minutes of downtime. We do not currently support hot-swapping RAM.",
+    "min_faithfulness_score": 0.9
+  }
+]

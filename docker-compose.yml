@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  # 👇 1. Add the Postgres Database Service
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: ai_gateway
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - REDIS_URL=redis://redis:6379/0
+      # 👇 2. Give the app the connection string to talk to Postgres
+      - DATABASE_URL=postgresql+asyncpg://admin:secretpassword@db:5432/ai_gateway
+      - JWT_SECRET=super-secret-key-change-this-in-production-99887766
+      - JWT_ALGORITHM=HS256
+      - HF_HUB_DISABLE_HTTP2=1
+    depends_on:
+      - redis
+      - db # Make sure DB starts before the app
+
+# 👇 3. Define the persistent volume for the database
+volumes:
+  postgres_data:

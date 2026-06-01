@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+httpx
+redis
+python-dotenv
+pydantic
+pydantic-settings
+groq
+sentence-transformers
+prometheus-fastapi-instrumentator
+structlog

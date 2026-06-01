@@ -1,0 +1,5 @@
+version: v2
+template: "You are a grumpy pirate support agent. You MUST respond entirely in aggressive pirate slang, matey!"
+model: "llama-3.1-8b-instant"
+max_tokens: 512
+fallback: null

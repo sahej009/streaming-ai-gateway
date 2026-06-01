@@ -1,0 +1,52 @@
+{
+  "version": "v1",
+  "timestamp": 1779872522,
+  "mean_faithfulness": 0.125,
+  "results": [
+    {
+      "user_input": "How do I reset my Acme Cloud password?",
+      "retrieved_contexts": [
+        "Users can reset their password by visiting the login page and clicking 'Forgot Password'. An email will be sent with a reset link valid for 15 minutes. Support agents cannot manually reset passwords for security reasons."
+      ],
+      "response": "",
+      "reference": "You can reset your password by clicking 'Forgot Password' on the login page. You will receive an email with a reset link that is valid for 15 minutes. For security reasons, support agents cannot do this for you.",
+      "faithfulness": 0.0
+    },
+    {
+      "user_input": "What is your refund policy?",
+      "retrieved_contexts": [
+        "Acme Cloud offers a strict 14-day money-back guarantee for all new annual subscriptions. Monthly subscriptions are non-refundable. To request a refund, users must email billing@acmecloud.com."
+      ],
+      "response": "",
+      "reference": "We offer a 14-day money-back guarantee for new annual subscriptions. Monthly subscriptions are non-refundable. Please email billing@acmecloud.com to request your refund.",
+      "faithfulness": NaN
+    },
+    {
+      "user_input": "Why am I getting a 502 Bad Gateway error?",
+      "retrieved_contexts": [
+        "A 502 Bad Gateway error usually means our edge routers cannot reach your specific server container. This happens if your server is currently restarting, or if your application crashed and the port is no longer open."
+      ],
+      "response": "",
+      "reference": "A 502 Bad Gateway error means our routers can't reach your server. This usually happens if your server is restarting or if your application has crashed and closed its network port.",
+      "faithfulness": NaN
+    },
+    {
+      "user_input": "How often do you back up my database?",
+      "retrieved_contexts": [
+        "All Managed PostgreSQL databases are automatically backed up every 12 hours. Backups are retained for 7 days on the standard plan, and 30 days on the enterprise plan."
+      ],
+      "response": "",
+      "reference": "Managed PostgreSQL databases are automatically backed up every 12 hours. These backups are kept for 7 days on the standard plan, and 30 days if you are on the enterprise plan.",
+      "faithfulness": NaN
+    },
+    {
+      "user_input": "Can I upgrade my server RAM without downtime?",
+      "retrieved_contexts": [
+        "Upgrading server RAM requires a hard reboot of the virtual machine. This results in approximately 2 to 5 minutes of downtime. There is no way to hot-swap RAM on Acme Cloud currently."
+      ],
+      "response": "",
+      "reference": "No, upgrading your server RAM requires a hard reboot, which will result in about 2 to 5 minutes of downtime. We do not currently support hot-swapping RAM.",
+      "faithfulness": 0.25
+    }
+  ]
+}
