@@ -1,59 +1,60 @@
 name: Prompt Evaluation Gate
 
-# Trigger this workflow whenever a PR changes files in the prompts/ directory
 on:
   pull_request:
     paths:
-      - "prompts/**"
+      - 'prompts/**'
 
-    permissions:
+# 👇 FIX 1: Explicitly grant the bot permission to comment
+permissions:
   pull-requests: write
   issues: write
 
 jobs:
   evaluate-prompt:
     runs-on: ubuntu-latest
-
-jobs:
-  evaluate-prompt:
-    runs-on: ubuntu-latest
-
+    
     steps:
-      # 1. Grab the code
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. Spin up the entire infrastructure (App, Redis, Postgres)
+      # 👇 FIX 2: Securely rebuild the .env file so Docker can boot!
+      - name: Create .env file for Docker
+        run: |
+          echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> .env
+          echo "JWT_SECRET=super-secret-ci-key-99" >> .env
+          echo "JWT_ALGORITHM=HS256" >> .env
+
       - name: Start Docker Environment
         run: |
           docker compose up -d
           echo "Waiting for services to become healthy..."
-          sleep 15  # Give Postgres and FastAPI time to boot
+          sleep 15
 
-      # 3. Setup Python for the RAGAS Eval Script
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
+      # 👇 FIX 3: Added langchain-community to satisfy Ragas dependencies
       - name: Install Eval Dependencies
-        run: pip install ragas httpx
+        run: pip install ragas httpx langchain-community langchain
 
-      # 4. Run the Evaluation Script
       - name: Run RAGAS Evaluation
         id: run_evals
-        # We assume your script outputs a JSON report to evals/results/latest.json
+        # 👇 FIX 4: Pass OpenAI key to Ragas so the "Judge" can score it
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          # Extract the version name from the branch or default to a test version
           python evals/run_eval.py --version test_pr
-
-          # Read the faithfulness score from the generated JSON
+          
+          # Read the score from the JSON file
           SCORE=$(jq '.mean_faithfulness' evals/results/latest.json)
           echo "FAITHFULNESS_SCORE=$SCORE" >> $GITHUB_ENV
-
+          
           # Fail the build if the score is below 0.75
           if (( $(echo "$SCORE < 0.75" | bc -l) )); then
-            echo "❌ Evaluation failed! Faithfulness score $SCORE is below 0.75 threshold."
+            echo "❌ Evaluation failed! Faithfulness score $SCORE is below threshold."
             echo "PASSED=false" >> $GITHUB_ENV
             exit 1
           else
@@ -61,18 +62,17 @@ jobs:
             echo "PASSED=true" >> $GITHUB_ENV
           fi
 
-      # 5. Post the score as a comment on the Pull Request
       - name: Post PR Comment
-        if: always() # Run this even if the previous step failed
+        if: always()
         uses: actions/github-script@v6
         with:
           script: |
             const passed = process.env.PASSED === 'true';
             const score = process.env.FAITHFULNESS_SCORE || 'N/A';
             const statusIcon = passed ? '✅' : '❌';
-
+            
             const body = `### Prompt Evaluation Report ${statusIcon}\n\n**Mean Faithfulness Score:** \`${score}\`\n\n*(Threshold: 0.75)*\n\n${passed ? 'Looks good to merge!' : 'Please revise the prompt to reduce hallucinations before merging.'}`;
-
+            
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
