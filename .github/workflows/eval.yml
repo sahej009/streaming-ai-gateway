@@ -39,16 +39,20 @@ jobs:
       # 👇 FIX 3: Added langchain-community to satisfy Ragas dependencies
       - name: Install Eval Dependencies
         run: pip install ragas httpx "langchain-community==0.0.38" "langchain-core==0.1.52" langchain-openai python-dotenv langchain-huggingface
+
       - name: Run RAGAS Evaluation
         id: run_evals
-        # 👇 FIX 4: Pass OpenAI key to Ragas so the "Judge" can score it
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           python evals/run_eval.py --version test_pr
 
-          # Read the score from the JSON file
-          SCORE=$(jq '.mean_faithfulness' evals/results/latest.json)
+          # 👇 NEW: Find the most recently created JSON file in the results folder
+          LATEST_FILE=$(ls -t evals/results/*.json | head -n 1)
+          echo "Found report file: $LATEST_FILE"
+
+          # Read the score from that specific file
+          SCORE=$(jq '.mean_faithfulness' "$LATEST_FILE")
           echo "FAITHFULNESS_SCORE=$SCORE" >> $GITHUB_ENV
 
           # Fail the build if the score is below 0.75
