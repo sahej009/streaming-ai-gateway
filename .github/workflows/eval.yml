@@ -38,7 +38,7 @@ jobs:
 
       # 👇 FIX 3: Added langchain-community to satisfy Ragas dependencies
       - name: Install Eval Dependencies
-        run: pip install ragas httpx "langchain-community==0.0.38" "langchain-core==0.1.52" langchain-openai
+        run: pip install ragas httpx "langchain-community==0.0.38" "langchain-core==0.1.52" langchain-openai python-dotenv
       - name: Run RAGAS Evaluation
         id: run_evals
         # 👇 FIX 4: Pass OpenAI key to Ragas so the "Judge" can score it
