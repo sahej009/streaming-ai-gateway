@@ -3,7 +3,7 @@ name: Prompt Evaluation Gate
 on:
   pull_request:
     paths:
-      - 'prompts/**'
+      - "prompts/**"
 
 # 👇 FIX 1: Explicitly grant the bot permission to comment
 permissions:
@@ -13,7 +13,7 @@ permissions:
 jobs:
   evaluate-prompt:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -34,11 +34,11 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       # 👇 FIX 3: Added langchain-community to satisfy Ragas dependencies
       - name: Install Eval Dependencies
-        run: pip install ragas httpx langchain-community langchain
+        run: pip install ragas httpx langchain-community langchain langchain-openai langchain-google-vertexai
 
       - name: Run RAGAS Evaluation
         id: run_evals
@@ -47,11 +47,11 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           python evals/run_eval.py --version test_pr
-          
+
           # Read the score from the JSON file
           SCORE=$(jq '.mean_faithfulness' evals/results/latest.json)
           echo "FAITHFULNESS_SCORE=$SCORE" >> $GITHUB_ENV
-          
+
           # Fail the build if the score is below 0.75
           if (( $(echo "$SCORE < 0.75" | bc -l) )); then
             echo "❌ Evaluation failed! Faithfulness score $SCORE is below threshold."
@@ -70,9 +70,9 @@ jobs:
             const passed = process.env.PASSED === 'true';
             const score = process.env.FAITHFULNESS_SCORE || 'N/A';
             const statusIcon = passed ? '✅' : '❌';
-            
+
             const body = `### Prompt Evaluation Report ${statusIcon}\n\n**Mean Faithfulness Score:** \`${score}\`\n\n*(Threshold: 0.75)*\n\n${passed ? 'Looks good to merge!' : 'Please revise the prompt to reduce hallucinations before merging.'}`;
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
