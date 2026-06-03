@@ -1,0 +1,84 @@
+name: Prompt Evaluation Gate
+
+on:
+  pull_request:
+    paths:
+      - "prompts/**"
+
+# 👇 FIX 1: Explicitly grant the bot permission to comment
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  evaluate-prompt:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 👇 FIX 2: Securely rebuild the .env file so Docker can boot!
+      - name: Create .env file for Docker
+        run: |
+          echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> .env
+          echo "JWT_SECRET=super-secret-ci-key-99" >> .env
+          echo "JWT_ALGORITHM=HS256" >> .env
+
+      - name: Start Docker Environment
+        run: |
+          docker compose up -d
+          echo "Waiting for services to become healthy..."
+          sleep 15
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      # 👇 FIX 3: Added langchain-community to satisfy Ragas dependencies
+      - name: Install Eval Dependencies
+        run: pip install ragas httpx "langchain-community==0.0.38" "langchain-core==0.1.52" langchain-openai python-dotenv langchain-huggingface
+
+      - name: Run RAGAS Evaluation
+        id: run_evals
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python evals/run_eval.py --version test_pr
+
+          # 👇 NEW: Find the most recently created JSON file in the results folder
+          LATEST_FILE=$(ls -t evals/results/*.json | head -n 1)
+          echo "Found report file: $LATEST_FILE"
+
+          # Read the score from that specific file
+          SCORE=$(jq '.mean_faithfulness' "$LATEST_FILE")
+          echo "FAITHFULNESS_SCORE=$SCORE" >> $GITHUB_ENV
+
+          # Fail the build if the score is below 0.75
+          if (( $(echo "$SCORE < 0.75" | bc -l) )); then
+            echo "❌ Evaluation failed! Faithfulness score $SCORE is below threshold."
+            echo "PASSED=false" >> $GITHUB_ENV
+            exit 1
+          else
+            echo "✅ Evaluation passed! Faithfulness score: $SCORE"
+            echo "PASSED=true" >> $GITHUB_ENV
+          fi
+
+      - name: Post PR Comment
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const passed = process.env.PASSED === 'true';
+            const score = process.env.FAITHFULNESS_SCORE || 'N/A';
+            const statusIcon = passed ? '✅' : '❌';
+
+            const body = `### Prompt Evaluation Report ${statusIcon}\n\n**Mean Faithfulness Score:** \`${score}\`\n\n*(Threshold: 0.75)*\n\n${passed ? 'Looks good to merge!' : 'Please revise the prompt to reduce hallucinations before merging.'}`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            })
