@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+// The gRPC Service definition
+service ChatService {
+  // A server-streaming RPC endpoint
+  rpc StreamChat (ChatRequest) returns (stream ChatChunk);
+}
+
+// The incoming request payload
+message ChatRequest {
+  string message = 1;
+  string session_id = 2;
+  string prompt_version = 3;
+}
+
+// The outgoing streamed response payload
+message ChatChunk {
+  string token = 1;
+  bool done = 2;
+  string request_id = 3;
+}
