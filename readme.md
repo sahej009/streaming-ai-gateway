@@ -17,7 +17,7 @@ _Below is a demonstration of the gateway streaming tokens in real-time while dyn
 
 ## 🏗️ Architecture
 
-```mermaid
+````mermaid
 graph TD
     %% Define Styles
     classDef client fill:#2a9d8f,stroke:#264653,stroke-width:2px,color:#fff;
@@ -65,6 +65,7 @@ graph TD
     %% Observability
     Gateway -.->|Scrape Metrics| Prom
     Prom -.->|Visualize| Grafana
+    ```
 
 
 ⚡ Quickstart (Run in < 2 Minutes)
@@ -108,4 +109,4 @@ Full Observability: Instrumented with Prometheus and Grafana for real-time track
 The gateway tracks LLM token spend, request latency, and cache efficiency in real-time.
 ![Grafana Dashboard](docs/grafana.png)
 
-```
+````
