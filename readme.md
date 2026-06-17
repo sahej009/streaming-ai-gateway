@@ -54,7 +54,8 @@ graph TD
     Gateway -.->|Async Append| DB
     Gateway -.->|Scrape Metrics| Prom
     Prom -.->|Visualize| Grafana
-mermaid```
+
+```
 
 ---
 
