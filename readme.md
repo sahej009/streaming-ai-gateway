@@ -65,7 +65,7 @@ graph TD
     %% Observability
     Gateway -.->|Scrape Metrics| Prom
     Prom -.->|Visualize| Grafana
-    ```
+```
 
 
 ⚡ Quickstart (Run in < 2 Minutes)
