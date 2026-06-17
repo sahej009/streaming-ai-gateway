@@ -17,7 +17,7 @@ _Below is a demonstration of the gateway streaming tokens in real-time while dyn
 
 ## 🏗️ Architecture
 
-````mermaid
+```mermaid
 graph TD
     classDef client fill:#2a9d8f,stroke:#264653,stroke-width:2px,color:#fff;
     classDef core fill:#e9c46a,stroke:#e76f51,stroke-width:2px;
@@ -65,7 +65,7 @@ graph TD
 git clone https://github.com/sahej009/streaming-ai-gateway.git
 cd streaming-ai-gateway
 echo "GROQ_API_KEY=your_key_here" > .env
-````
+```
 
 ```bash
 docker compose up -d --build
