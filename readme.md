@@ -65,6 +65,8 @@ graph TD
     %% Observability
     Gateway -.->|Scrape Metrics| Prom
     Prom -.->|Visualize| Grafana
+
+
 ⚡ Quickstart (Run in < 2 Minutes)
 You only need Docker installed to run the entire stack (Database, Cache, API Gateway, and UI).
 
@@ -105,4 +107,5 @@ Full Observability: Instrumented with Prometheus and Grafana for real-time track
 📊 Observability & Metrics
 The gateway tracks LLM token spend, request latency, and cache efficiency in real-time.
 ![Grafana Dashboard](docs/grafana.png)
+
 ```
