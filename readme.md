@@ -19,13 +19,11 @@ _Below is a demonstration of the gateway streaming tokens in real-time while dyn
 
 ````mermaid
 graph TD
-    %% Define Styles
     classDef client fill:#2a9d8f,stroke:#264653,stroke-width:2px,color:#fff;
     classDef core fill:#e9c46a,stroke:#e76f51,stroke-width:2px;
     classDef external fill:#f4a261,stroke:#e76f51,stroke-width:2px,color:#fff;
     classDef db fill:#264653,stroke:#2a9d8f,stroke-width:2px,color:#fff;
 
-    %% Nodes
     Client((Client App / UI)):::client
     Gateway[FastAPI Dual-Transport Gateway<br/>REST & WebSockets]:::core
     Auth{JWT Auth Middleware}:::core
@@ -40,48 +38,38 @@ graph TD
     Prom[Prometheus]:::db
     Grafana[Grafana]:::db
 
-    %% Flow
     Client -->|POST /chat/stream| Gateway
     Gateway -->|Validate Token| Auth
     Auth -->|Authorized| Cache
-
     Cache -.->|Cache Hit <br/> Cosine Sim > 0.92| Client
-
     Cache -->|Cache Miss| Registry
     Registry -->|Extract References| Connectors
-
     Connectors -->|Fetch| Slack
     Connectors -->|Fetch| Jira
     Slack & Jira -->|Raw Context| PII
     PII -->|Scrubbed Context| Registry
-
     Registry -->|Inject Context & Prompt| LLM
     LLM -->|Stream Tokens| Gateway
-
-    %% Background Tasks
     Gateway -.->|Async Save| Cache
     Gateway -.->|Async Append| DB
-
-    %% Observability
     Gateway -.->|Scrape Metrics| Prom
     Prom -.->|Visualize| Grafana
+mermaid```
+
+---
+
+## ⚡ Quickstart (Run in < 2 Minutes)
+
+```bash
+git clone https://github.com/sahej009/streaming-ai-gateway.git
+cd streaming-ai-gateway
+echo "GROQ_API_KEY=your_key_here" > .env
+````
+
+```bash
+docker compose up -d --build
 ```
 
-
-⚡ Quickstart (Run in < 2 Minutes)
-You only need Docker installed to run the entire stack (Database, Cache, API Gateway, and UI).
-
-Clone the repo and set up your environment:
-
-Bash
-git clone [https://github.com/sahej009/streaming-ai-gateway.git](https://github.com/sahej009/streaming-ai-gateway.git)
-cd streaming-ai-gateway
-# Add your Groq/OpenAI key to a .env file
-echo "GROQ_API_KEY=your_key_here" > .env
-Boot the architecture:
-
-Bash
-docker compose up -d --build
 Access the Application:
 
 Chat UI: http://localhost:3000
@@ -109,4 +97,6 @@ Full Observability: Instrumented with Prometheus and Grafana for real-time track
 The gateway tracks LLM token spend, request latency, and cache efficiency in real-time.
 ![Grafana Dashboard](docs/grafana.png)
 
-````
+```
+
+```
