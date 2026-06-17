@@ -11,7 +11,7 @@ An enterprise-grade, dual-transport (REST + gRPC) AI Gateway designed for high-p
 
 _Below is a demonstration of the gateway streaming tokens in real-time while dynamically intercepting a Slack/Jira reference, securely fetching the context, and injecting it into the LLM prompt._
 
-**[ 📸 INSERT YOUR GIF OR SCREENSHOT OF THE REACT UI HERE ]**
+![Slack Connector Demo](docs/slack_jira_demo.gif)
 
 ---
 
@@ -65,8 +65,6 @@ graph TD
     %% Observability
     Gateway -.->|Scrape Metrics| Prom
     Prom -.->|Visualize| Grafana
-
-
 ⚡ Quickstart (Run in < 2 Minutes)
 You only need Docker installed to run the entire stack (Database, Cache, API Gateway, and UI).
 
@@ -87,7 +85,7 @@ Chat UI: http://localhost:3000
 
 API Docs (Swagger): http://localhost:8000/docs
 
-Grafana Dashboards: http://localhost:3000 (Update to your Grafana port if applicable)
+Grafana Dashboards: http://localhost:3001
 
 🛠️ Core Enterprise Features
 Dual-Transport Streaming: Streams tokens directly from the LLM to the client via Server-Sent Events (SSE) and WebSockets.
@@ -98,7 +96,7 @@ Dynamic Prompt Routing (Canary Deployments): Routes traffic between different YA
 
 Enterprise Context Connectors: Automatically intercepts Jira ticket IDs and Slack threads, fetches the data asynchronously, and injects it into the prompt context.
 
-On-the-Fly PII Redaction: Routes all fetched enterprise context through Microsoft Presidio to scrub personally identifiable information (emails, phone numbers) before it hits the external LLM.
+On-the-Fly PII Redaction: Routes all fetched enterprise context through Microsoft Presidio to scrub personally identifiable information (emails, phone numbers, names) before it hits the external LLM.
 
 Append-Only Audit Logging: Silently records every interaction, token spend, and latency metric into a PostgreSQL database without blocking the streaming hot-path.
 
@@ -107,8 +105,5 @@ Full Observability: Instrumented with Prometheus and Grafana for real-time track
 📊 Observability & Metrics
 The gateway tracks LLM token spend, request latency, and cache efficiency in real-time.
 
-[ 📸 INSERT YOUR GRAFANA SCREENSHOT HERE ]
-
-
-
+[Grafana screenshot](grafana.png)
 ```
