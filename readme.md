@@ -85,7 +85,7 @@ Chat UI: http://localhost:3000
 
 API Docs (Swagger): http://localhost:8000/docs
 
-Grafana Dashboards: http://localhost:3001
+Grafana Dashboards: http://localhost:3001 (Update to your Grafana port if applicable)
 
 🛠️ Core Enterprise Features
 Dual-Transport Streaming: Streams tokens directly from the LLM to the client via Server-Sent Events (SSE) and WebSockets.
@@ -104,6 +104,5 @@ Full Observability: Instrumented with Prometheus and Grafana for real-time track
 
 📊 Observability & Metrics
 The gateway tracks LLM token spend, request latency, and cache efficiency in real-time.
-
-[Grafana screenshot](grafana.png)
+![Grafana Dashboard](docs/grafana.png)
 ```
