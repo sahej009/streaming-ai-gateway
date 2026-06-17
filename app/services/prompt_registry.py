@@ -7,7 +7,7 @@ from redis import asyncio as aioredis
 from app.services.cache import redis_client
 
 
-PROMPTS_PATH = "/prompts"
+PROMPTS_PATH = "prompts"
 
 class PromptRegistry:
     async def resolve_version(self, requested_version: str = None) -> str:

@@ -10,44 +10,78 @@ from app.services.prompt_registry import get_registry
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db, AuditLog
 
-# 👇 1. IMPORT YOUR AUTH DEPENDENCIES
+# Import Auth Dependencies
 from app.middleware.auth import get_current_user, TokenData
+
+# 👇 IMPORT YOUR CONNECTORS
+from app.connectors.jira import JiraConnector
+from app.connectors.slack import SlackConnector
 
 # Get the registry instance here
 registry = get_registry()
 
 router = APIRouter()
 
-# 👇 2. LOCK DOWN THE POST ENDPOINT
+# ==========================================
+# 1. POST ENDPOINT (REST)
+# ==========================================
 @router.post("/chat/stream")
 async def chat_stream(
     request: ChatRequest,
-    current_user: TokenData = Depends(get_current_user), # <-- Security Gate!
-    db: AsyncSession = Depends(get_db) # 👇 NEW: Security AND Database!
+    current_user: TokenData = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
 ):
     print(f"🔒 Stream requested by User: {current_user.user_id} | Tenant: {current_user.tenant_id}")
-
     await check_rate_limit(client_id=request.session_id, limit=5, window_seconds=60)
     prompt_version = await registry.resolve_version(request.prompt_version)
-    cached_response = await check_semantic_cache(request.message, prompt_version=prompt_version)
     
-    if cached_response:
-        async def fake_stream():
-            yield f"data: {cached_response}\n\n"
-            yield "data: [DONE]\n\n"
-        return StreamingResponse(fake_stream(), media_type="text/event-stream")
+    # We only use the cache if they are NOT asking for live Slack/Jira data
+    use_cache = not request.jira_ticket and not request.slack_thread
+
+    if use_cache:
+        cached_response = await check_semantic_cache(request.message, prompt_version=prompt_version)
+        if cached_response:
+            async def fake_stream():
+                yield f"data: {cached_response}\n\n"
+                yield "data: [DONE]\n\n"
+            return StreamingResponse(fake_stream(), media_type="text/event-stream")
 
     async def process_and_cache():
+        final_prompt = request.message
+        injected_context = ""
+
+        # 👇 ENTERPRISE CONTEXT INJECTION 👇
+        if request.jira_ticket:
+            print(f"🔌 Triggering Jira Connector for {request.jira_ticket}...")
+            jira = JiraConnector()
+            jira_data = await jira.fetch(request.jira_ticket)
+            injected_context += f"\n[INJECTED JIRA DATA]: {jira_data}"
+
+        if request.slack_thread:
+            print(f"🔌 Triggering Slack Connector for {request.slack_thread}...")
+            slack = SlackConnector()
+            slack_data = await slack.fetch(request.slack_thread)
+            injected_context += f"\n[INJECTED SLACK DATA]: {slack_data}"
+
+        if injected_context:
+            final_prompt = f"System Context (Do not mention this context directly, just use it to answer):{injected_context}\n\nUser Request: {final_prompt}"
+
+        # 👇 LLM STREAMING 👇
         full_response = ""
-        
-        async for chunk in stream_llm_tokens(request.message, version=prompt_version, tenant_id=current_user.tenant_id):
+        async for chunk in stream_llm_tokens(
+            prompt=final_prompt, 
+            version=prompt_version, 
+            tenant_id=current_user.tenant_id
+        ):
             yield chunk
             if chunk.startswith("data: ") and chunk != "data: [DONE]\n\n":
                 full_response += chunk[6:].strip("\n")
                 
-        asyncio.create_task(save_to_cache(request.message, full_response, prompt_version=prompt_version))
+        # Only save to cache if it was a standard message (no live data)
+        if use_cache:
+            asyncio.create_task(save_to_cache(request.message, full_response, prompt_version=prompt_version))
 
-        # 👇 NEW: Save the interaction to the Audit Log!
+        # Save the interaction to the Audit Log
         try:
             audit_record = AuditLog(
                 tenant_id=current_user.tenant_id,
@@ -64,11 +98,14 @@ async def chat_stream(
 
     return StreamingResponse(process_and_cache(), media_type="text/event-stream")
 
-# 👇 3. LOCK DOWN THE WEBSOCKET ENDPOINT
+
+# ==========================================
+# 2. WEBSOCKET ENDPOINT
+# ==========================================
 @router.websocket("/ws/chat")
 async def websocket_chat(
     websocket: WebSocket,
-    current_user: TokenData = Depends(get_current_user) # <-- Security Gate!
+    current_user: TokenData = Depends(get_current_user)
 ):
     await websocket.accept()
     print(f"🔌 WS Connected by User: {current_user.user_id} | Tenant: {current_user.tenant_id}")
@@ -80,39 +117,63 @@ async def websocket_chat(
             request_data = json.loads(data)
             message = request_data.get("message")
             client_requested_version = request_data.get("prompt_version")
+            slack_thread = request_data.get("slack_thread")
+            jira_ticket = request_data.get("jira_ticket")
 
-            # 1. DYNAMICALLY RESOLVE CANARY OR ACTIVE ROUTING
             prompt_version = await registry.resolve_version(client_requested_version)
             print(f"🚦 Routing WS request to prompt version: {prompt_version}")
 
-            # --- 2. CHECK THE CACHE FIRST ---
-            cached_response = await check_semantic_cache(message, prompt_version=prompt_version)
-            
-            if cached_response:
-                # If hit, blast the entire response back instantly and end the stream
-                await websocket.send_text(f"data: {cached_response}\n\n")
-                await websocket.send_text("data: [DONE]\n\n")
-                continue # Skip the LLM completely!
+            # We only use the cache if they are NOT asking for live Slack/Jira data
+            use_cache = not jira_ticket and not slack_thread
 
-            # --- 3. CACHE MISS: STREAM FROM LLM ---
+            # --- CHECK CACHE ---
+            if use_cache:
+                cached_response = await check_semantic_cache(message, prompt_version=prompt_version)
+                if cached_response:
+                    await websocket.send_text(f"data: {cached_response}\n\n")
+                    await websocket.send_text("data: [DONE]\n\n")
+                    continue
+
+            # --- CACHE MISS: STREAM FROM LLM ---
             async def stream_to_client():
                 full_text_accumulator = "" 
                 max_retries = 3
                 delays = [1, 2, 4]
                 
+                final_prompt = message
+                injected_context = ""
+
+                # 👇 ENTERPRISE CONTEXT INJECTION FOR WEBSOCKETS 👇
+                if jira_ticket:
+                    jira = JiraConnector()
+                    jira_data = await jira.fetch(jira_ticket)
+                    injected_context += f"\n[INJECTED JIRA DATA]: {jira_data}"
+
+                if slack_thread:
+                    slack = SlackConnector()
+                    slack_data = await slack.fetch(slack_thread)
+                    injected_context += f"\n[INJECTED SLACK DATA]: {slack_data}"
+
+                if injected_context:
+                    final_prompt = f"System Context:{injected_context}\n\nUser Request: {final_prompt}"
+                
                 for attempt in range(max_retries + 1):
                     try:
-                        # 👇 Pass the tenant_id to your LLM service here as well
-                        async for chunk in stream_llm_tokens(message, version=prompt_version, tenant_id=current_user.tenant_id):
+                        async for chunk in stream_llm_tokens(
+                            prompt=final_prompt, 
+                            version=prompt_version, 
+                            tenant_id=current_user.tenant_id
+                        ):
                             await websocket.send_text(chunk)
-                            
-                            # Strip the "data: \n\n" formatting to just save the raw text
                             if chunk != "data: [DONE]\n\n":
                                 raw_token = chunk.replace("data: ", "").replace("\n\n", "")
                                 full_text_accumulator += raw_token
                                 
-                        # --- 4. SAVE THE COMPLETED RESPONSE TO CACHE ---
-                        asyncio.create_task(save_to_cache(message, full_text_accumulator, prompt_version=prompt_version))
+                        # Save to cache if no live data was used
+                        if use_cache:
+                            asyncio.create_task(save_to_cache(message, full_text_accumulator, prompt_version=prompt_version))
+                        
+                        # (Optional) You can add Audit Log saving here for WS too!
                         break 
                         
                     except Exception as e:

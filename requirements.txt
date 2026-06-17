@@ -20,3 +20,11 @@ passlib[bcrypt]
 python-multipart
 sqlalchemy
 asyncpg
+grpcio
+grpcio-tools
+presidio-analyzer
+presidio-anonymizer
+spacy
+slack-sdk
+slack-bolt
+aiohttp

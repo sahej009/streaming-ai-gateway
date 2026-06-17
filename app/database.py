@@ -1,8 +1,13 @@
 import os
 import datetime
+
+import redis
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import Column, Integer, String, Text, DateTime
+
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+redis_client = redis.from_url(REDIS_URL)
 
 # Grab the connection URL from Docker
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://admin:secretpassword@localhost:5432/ai_gateway")

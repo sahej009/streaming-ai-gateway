@@ -1,9 +1,16 @@
 import os
 import json
+import re
 import numpy as np
 from redis import asyncio as aioredis
 from sentence_transformers import SentenceTransformer
 from app.services.metrics import cache_hits_total, cache_misses_total
+
+# 👇 1. Our new Regex Helper Function
+def extract_numbers_from_prompt(prompt: str) -> list[int]:
+    """Extracts all distinct integers from a prompt for metadata filtering."""
+    matches = re.findall(r'\b\d+\b', prompt)
+    return sorted([int(m) for m in matches])
 
 # Initialize the embedding model (this downloads it locally the first time)
 print("Loading embedding model...")
@@ -43,9 +50,28 @@ async def check_semantic_cache(prompt: str, threshold: float = 0.92, prompt_vers
         similarity = cosine_similarity(prompt_embedding, cached_embedding)
 
         if similarity > threshold:
+            print(f"🔍 DEBUG: Math says these are {similarity:.4f} similar.")
+            
+            # Safely grab the original prompt
+            original_prompt_bytes = cached_data.get(b'original_prompt')
+            
+            if original_prompt_bytes:
+                cached_prompt = original_prompt_bytes.decode('utf-8')
+                new_numbers = extract_numbers_from_prompt(prompt)
+                cached_numbers = extract_numbers_from_prompt(cached_prompt)
+                
+                print(f"🔢 DEBUG - New Numbers: {new_numbers} | Cached Numbers: {cached_numbers}")
+                
+                if new_numbers != cached_numbers:
+                    print(f"🛑 CACHE BLOCKED: Numeric mismatch. New: {new_numbers}, Cached: {cached_numbers}")
+                    continue # Try the next key!
+            else:
+                print("⚠️ DEBUG: Cache entry is missing 'original_prompt'! Bypassing guardrail.")
+
             print(f"✅ Cache HIT! Similarity: {similarity:.4f} (Version: {prompt_version})")
             cache_hits_total.labels(prompt_version=prompt_version, tenant_id=tenant_id).inc()
             return cached_data[b'response'].decode('utf-8')
+        
 
     print(f"❌ Cache MISS (Version: {prompt_version})")
     cache_misses_total.labels(prompt_version=prompt_version, tenant_id=tenant_id).inc()
@@ -65,6 +91,7 @@ async def save_to_cache(prompt: str, response: str, prompt_version: str = "v1", 
     
     await redis_client.hset(key, mapping={
         'embedding': prompt_embedding.tobytes(),
+        'original_prompt': prompt, # 👇 3. Save the prompt text so we can read it later!
         'response': response
     })
     await redis_client.expire(key, ttl)
