@@ -62,12 +62,27 @@ graph TD
 Markdown## ⚡ Quickstart (Run in < 2 Minutes)
 
 ```bash
+
 git clone https://github.com/sahej009/streaming-ai-gateway.git
 cd streaming-ai-gateway
 echo "GROQ_API_KEY=your_key_here" > .env
 Bashdocker compose up -d --build
-Access the Application:Chat UI: http://localhost:3000API Docs (Swagger): http://localhost:8000/docsPrometheus Metrics: http://localhost:8000/metricsGrafana Dashboards: http://localhost:3001🛠️ Core Enterprise FeaturesDual-Transport Streaming: Streams tokens directly from the LLM to the client via Server-Sent Events (SSE) and WebSockets.Semantic Caching (~92% Latency Reduction): Uses HuggingFace embeddings (all-MiniLM-L6-v2) and Redis to instantly return cached answers for semantically similar questions, saving API costs and reducing median latency from 835 ms down to 64 ms.Dynamic Prompt Routing (Canary Deployments): Routes traffic between different YAML-defined prompt versions (v1 and v2) on the fly, allowing for safe A/B testing of system prompts.Enterprise Context Connectors: Automatically intercepts Jira ticket IDs and Slack threads, fetches the data asynchronously, and injects it into the prompt context.On-the-Fly PII Redaction: Routes all fetched enterprise context through Microsoft Presidio to scrub personally identifiable information (emails, phone numbers, names) before it hits the external LLM.Append-Only Audit Logging: Silently records every interaction, token spend, and latency metric into a PostgreSQL database without blocking the streaming hot-path.Full Observability: Instrumented with Prometheus and Grafana for real-time tracking of token spend (llm_token_spend_total), cache hit rates (cache_hits_total), and streaming latency (llm_request_latency_seconds) across tenant_id and prompt_version labels.📊 Observability & Load-Testing MetricsThe gateway tracks LLM token spend, request latency, and cache efficiency in real time and was stress-tested under 50-user concurrency using Locust (tests/locustfile.py):MetricBaseline (Cached Routing)50-User Stress TestEngineering ImpactMedian Latency (p50)64 ms (18 ms min)630 ms~92% latency reduction via Redis semantic cacheTail Latency (p95)94 ms1,300 msSub-100ms p95 routing for cached queriesThroughput4.4 RPS18.9 RPS (~1,130 req/min)Sustained high-concurrency SSE streamingStreamed Requests5951,8090% Failure Rate (0 dropped streams)
-Once you paste that below your `## 🏗️ Architecture` block and save `README.md`, run:
+Access the Application:Chat UI: http://localhost:3000API Docs (Swagger): http://localhost:8000/docsPrometheus Metrics: http://localhost:8000/metricsGrafana Dashboards: http://localhost:3001
+
+
+
+🛠️ Core Enterprise FeaturesDual-Transport Streaming: 
+Streams tokens directly from the LLM to the client via Server-Sent Events (SSE) and WebSockets.Semantic Caching (~92% Latency Reduction): Uses HuggingFace embeddings (all-MiniLM-L6-v2) and Redis to instantly return cached answers for semantically similar questions, saving API costs and reducing median latency from 835 ms down to 64 ms.
+Dynamic Prompt Routing (Canary Deployments): Routes traffic between different YAML-defined prompt versions (v1 and v2) on the fly, allowing for safe A/B testing of system prompts.
+Enterprise Context Connectors: Automatically intercepts Jira ticket IDs and Slack threads, fetches the data asynchronously, and injects it into the prompt context.
+
+On-the-Fly PII Redaction: Routes all fetched enterprise context through Microsoft Presidio to scrub personally identifiable information (emails, phone numbers, names) before it hits the external LLM.
+Append-Only Audit Logging: Silently records every interaction, token spend, and latency metric into a PostgreSQL database without blocking the streaming hot-path.Full Observability: Instrumented with Prometheus and Grafana for real-time tracking of token spend (llm_token_spend_total), cache hit rates (cache_hits_total), and streaming latency (llm_request_latency_seconds) across tenant_id and prompt_version labels.
+
+📊 Observability & Load-Testing Metrics
+The gateway tracks LLM token spend, request latency, and cache efficiency in real time and was stress-tested under 50-user concurrency using Locust (tests/locustfile.py):MetricBaseline (Cached Routing)50-User Stress TestEngineering ImpactMedian Latency (p50)64 ms (18 ms min)630 ms~92% latency reduction via Redis semantic cacheTail Latency (p95)94 ms1,300 msSub-100ms p95 routing for cached queriesThroughput4.4 RPS18.9 RPS (~1,130 req/min)Sustained high-concurrency SSE streamingStreamed Requests5951,8090% Failure Rate (0 dropped streams)
+Once you paste that below your `## 🏗️ Architecture` block and save `README.md`,
+run:
 
 ```powershell
 git add README.md
