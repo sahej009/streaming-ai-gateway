@@ -100,6 +100,4 @@ The gateway tracks LLM token spend, request latency, and cache efficiency in rea
 | **Streamed Requests** | 595 | **1,809** | **0% Failure Rate** (`0` dropped streams) |
 
 ![Grafana Dashboard](docs/grafana.png)
-git add README.md
-git commit -m "docs(readme): format feature headers and add Locust benchmark metrics"
-git push origin main
+
