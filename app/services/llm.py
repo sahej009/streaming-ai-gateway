@@ -10,8 +10,8 @@ async def stream_llm_tokens(
     prompt: str, 
     version: str = None, 
     tenant_id: str = None,
-    slack_thread: str = None, # 👇 NEW
-    jira_ticket: str = None   # 👇 NEW
+    slack_thread: str = None, 
+    jira_ticket: str = None   
 ):
     if tenant_id:
         print(f"🧠 LLM processing request for tenant: {tenant_id}")
@@ -29,10 +29,10 @@ async def stream_llm_tokens(
     # 3. Apply the YAML config, or fallback to defaults
     if prompt_config:
         system_prompt = prompt_config.get("template", "You are a concise, helpful support agent.")
-        model = prompt_config.get("model", "llama-3.1-8b-instant")
+        model = prompt_config.get("model", "openai/gpt-oss-120b")
     else:
         system_prompt = "You are a concise, helpful support agent."
-        model = "llama-3.1-8b-instant"
+        model = "openai/gpt-oss-120b"
 
     # 👇 4. NEW: Fetch and Inject Enterprise Context
     context_blocks = []

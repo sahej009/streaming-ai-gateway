@@ -18,13 +18,9 @@ export default function App() {
     setMessage("");
 
     try {
-      // 2. Silent Auto-Login to get JWT Token
-      const authRes = await fetch("http://localhost:8000/auth/token", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({ username: "admin", password: "secret123" }),
-      });
-      const { access_token } = await authRes.json();
+      // 2. BYPASS BROKEN LOGIN: Hardcode your generated JWT here
+      const access_token =
+        "IsInJvbGUiOiJhZG1pbiIsImV4cCI6MTgyMTg2NzEyNC4zNzM2NjQxfQ.53ns-5GkEgVPXoisjWgGkh_TStQz8MawL6CxUOru2sY";
 
       // 3. Prepare an empty assistant message slot
       setChatHistory((prev) => [...prev, { role: "assistant", content: "" }]);

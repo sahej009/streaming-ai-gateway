@@ -18,7 +18,7 @@ asyncpg
 python-jose[cryptography]
 passlib[bcrypt]
 python-multipart
-sqlalchemy
+sqlalchemy[asyncio]
 asyncpg
 grpcio
 grpcio-tools
