@@ -1,5 +1,8 @@
+from dotenv import load_dotenv
+load_dotenv()
 import asyncio
-from fastapi import FastAPI, Depends, HTTPException, status
+import time # 👈 NEW: Required for calculating request duration
+from fastapi import FastAPI, Depends, HTTPException, status, Request # 👈 NEW: Added Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from prometheus_fastapi_instrumentator import Instrumentator
@@ -8,9 +11,10 @@ from app.database import engine, Base
 
 from app.routers import chat, tasks, admin
 from app.services.watchdog import auto_rollback_watchdog
-
-# 👇 Import the token generator we just built
 from app.middleware.auth import create_access_token
+
+# 👇 NEW: Import your custom metric from the telemetry file we discussed
+from app.core.telemetry import GATEWAY_LATENCY
 
 import grpc
 from concurrent import futures
@@ -18,22 +22,23 @@ import uvicorn
 from app.grpc import chat_pb2_grpc
 from app.grpc.servicer import ChatServicer
 
-# 2. Add the lifespan context manager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # 👇 NEW: Create the database tables on startup
     print("🗄️ Initializing database tables...")
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         
-    # Start the watchdog as a background task
     watchdog_task = asyncio.create_task(auto_rollback_watchdog())
     yield
-    # Clean up when the server shuts down
     watchdog_task.cancel()
 
-# 3. Attach the lifespan to the FastAPI app
-app = FastAPI (title="Streaming AI Gateway", lifespan=lifespan)
+
+
+app = FastAPI(title="Streaming AI Gateway", lifespan=lifespan)
+
+from app.core.telemetry import setup_telemetry
+
+setup_telemetry(app)
 
 app.add_middleware(
     CORSMiddleware,
@@ -43,7 +48,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Start Prometheus metrics collection
+# 👇 NEW: Custom Middleware for p95 Latency Tracking
+@app.middleware("http")
+async def track_latency_middleware(request: Request, call_next):
+    # 1. Skip the /metrics endpoint so Prometheus scraping doesn't skew your latency data
+    if request.url.path == "/metrics":
+        return await call_next(request)
+        
+    # 2. Start the stopwatch
+    start_time = time.time()
+    
+    # 3. Process the actual user request
+    response = await call_next(request)
+    
+    # 4. Stop the stopwatch and calculate the duration
+    process_time = time.time() - start_time
+    
+    # 5. Record the duration in your custom Prometheus histogram
+    GATEWAY_LATENCY.observe(process_time)
+    
+    return response
+
+# Start Prometheus metrics collection (This will now also serve GATEWAY_LATENCY)
 Instrumentator().instrument(app).expose(app)
 
 app.include_router(chat.router)
@@ -54,53 +80,37 @@ app.include_router(admin.router)
 async def health_check():
     return {"status": "healthy"}
 
-# 👇 NEW: The gRPC Server Boot sequence
 async def serve_grpc():
-    print("🚀 Starting gRPC server on port 50051...")
-    # 1. Create an async gRPC server with a thread pool
+    print("🚀 Starting gRPC server on port 50053...")
     server = grpc.aio.server(futures.ThreadPoolExecutor(max_workers=10))
-    
-    # 2. Attach your custom ChatServicer to the server
     chat_pb2_grpc.add_ChatServiceServicer_to_server(ChatServicer(), server)
-    
-    # 3. Bind it to port 50051 (the standard gRPC port) 
-    server.add_insecure_port('[::]:50051')
-    
-    # 4. Start the server and keep it alive
+    server.add_insecure_port('[::]:50053')
     await server.start()
     await server.wait_for_termination()
 
-#  NEW: The Login Route
 @app.post("/auth/token")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    # Mock user verification (In a real app, you would check a Postgres database here)
     if form_data.username == "admin" and form_data.password == "secret123":
-        # Create a token and inject our custom Tenant ID and Role
         access_token = create_access_token(
             data={"sub": form_data.username, "tenant_id": "acme-corp", "role": "admin"}
         )
         return {"access_token": access_token, "token_type": "bearer"}
     
-    # If the password is wrong, kick them out
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Incorrect username or password",
         headers={"WWW-Authenticate": "Bearer"},
     )
 
-#  NEW: The Master Dual-Boot Function
 async def main():
-    # 1. Configure the Uvicorn server for FastAPI
     config = uvicorn.Config(app, host="0.0.0.0", port=8000, log_level="info")
     fastapi_server = uvicorn.Server(config)
     
-    # 2. Run both servers concurrently using asyncio.gather 
     print("🌟 Booting Dual-Transport AI Gateway (REST + gRPC)...")
     await asyncio.gather(
         fastapi_server.serve(),
         serve_grpc()
     )
 
-# 3. If the script is run directly, start the master loop
 if __name__ == "__main__":
     asyncio.run(main())

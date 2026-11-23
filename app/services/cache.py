@@ -11,18 +11,19 @@ def extract_numbers_from_prompt(prompt: str) -> list[int]:
     """Extracts all distinct integers from a prompt for metadata filtering."""
     matches = re.findall(r'\b\d+\b', prompt)
     return sorted([int(m) for m in matches])
-
-# Initialize the embedding model (this downloads it locally the first time)
-print("Loading embedding model...")
 _model = None
 
 def get_embedding_model():
-    """Lazy loads the model only when it is actually needed"""
+    """Loads the embedding model once and warms it up."""
     global _model
     if _model is None:
-        print("🧠 Downloading/Loading Embedding Model...")
+        print("🧠 Loading & warming up embedding model...")
         _model = SentenceTransformer('all-MiniLM-L6-v2')
+        _model.encode("warmup")
     return _model
+
+# Eagerly load + warm up at startup instead of stalling the first request
+get_embedding_model()
 
 # Initialize the Redis connection
 redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")

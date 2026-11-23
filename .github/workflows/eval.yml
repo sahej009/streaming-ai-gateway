@@ -4,8 +4,10 @@ on:
   pull_request:
     paths:
       - "prompts/**"
+      - "app/**"
+      - "evals/**"
+  workflow_dispatch: # Allows manual runs from the GitHub Actions tab
 
-# 👇 FIX 1: Explicitly grant the bot permission to comment
 permissions:
   pull-requests: write
   issues: write
@@ -18,67 +20,94 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 👇 FIX 2: Securely rebuild the .env file so Docker can boot!
+      # Rebuild .env for Docker and the eval harness (no HF_HUB_OFFLINE on fresh runners)
       - name: Create .env file for Docker
         run: |
           echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> .env
           echo "JWT_SECRET=super-secret-ci-key-99" >> .env
           echo "JWT_ALGORITHM=HS256" >> .env
+          echo "RATE_LIMIT_PER_MINUTE=120" >> .env
 
-      - name: Start Docker Environment
+      # --build ensures CI tests the PR's actual code changes; polling avoids flaky sleep timeouts
+      - name: Start Docker Environment & Wait for Gateway
         run: |
-          docker compose up -d
-          echo "Waiting for services to become healthy..."
-          sleep 15
+          docker compose up -d --build
+          echo "Waiting for gateway to warm up embedding model and bind port 8000..."
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8000/metrics > /dev/null; then
+              echo "✅ Gateway is ready!"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "❌ Gateway failed to start within 90s"
+          docker compose logs
+          exit 1
 
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
-      # 👇 FIX 3: Added langchain-community to satisfy Ragas dependencies
+      # Lightweight dependencies for evals/run_judge.py (no heavy RAGAS/LangChain stack needed)
       - name: Install Eval Dependencies
-        run: pip install ragas httpx "langchain-community==0.0.38" "langchain-core==0.1.52" langchain-openai python-dotenv langchain-huggingface
+        run: pip install httpx groq python-dotenv
 
-      - name: Run RAGAS Evaluation
+      - name: Run 50-Case LLM-as-a-Judge Evaluation
         id: run_evals
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          python evals/run_eval.py --version test_pr
+          # Flush Redis so cache hit rate is measured cleanly from zero
+          docker compose exec -T redis redis-cli FLUSHDB
 
-          # 👇 NEW: Find the most recently created JSON file in the results folder
-          LATEST_FILE=$(ls -t evals/results/*.json | head -n 1)
-          echo "Found report file: $LATEST_FILE"
+          # Run judge without aborting immediately so we can still export metrics for the PR comment
+          set +e
+          python evals/run_judge.py
+          EVAL_EXIT=$?
+          set -e
 
-          # Read the score from that specific file
-          SCORE=$(jq '.mean_faithfulness' "$LATEST_FILE")
-          echo "FAITHFULNESS_SCORE=$SCORE" >> $GITHUB_ENV
+          # Extract metrics from evals/eval_report.json
+          echo "FAITHFULNESS=$(jq -r '.summary.mean_faithfulness' evals/eval_report.json)" >> $GITHUB_ENV
+          echo "SUCCESS_RATE=$(jq -r '.summary.success_rate_pct' evals/eval_report.json)" >> $GITHUB_ENV
+          echo "RETRIEVAL_HIT=$(jq -r '.summary.retrieval_hit_rate_pct' evals/eval_report.json)" >> $GITHUB_ENV
+          echo "CACHE_HIT=$(jq -r '.summary.cache_hit_rate_pct' evals/eval_report.json)" >> $GITHUB_ENV
+          echo "P95_LATENCY=$(jq -r '.summary.p95_latency_sec' evals/eval_report.json)" >> $GITHUB_ENV
+          echo "COST_1K=$(jq -r '.summary.effective_cost_per_1k_usd' evals/eval_report.json)" >> $GITHUB_ENV
 
-          # Fail the build if the score is below 0.75
-          if (( $(echo "$SCORE < 0.75" | bc -l) )); then
-            echo "❌ Evaluation failed! Faithfulness score $SCORE is below threshold."
-            echo "PASSED=false" >> $GITHUB_ENV
-            exit 1
-          else
-            echo "✅ Evaluation passed! Faithfulness score: $SCORE"
+          if [ "$EVAL_EXIT" -eq 0 ]; then
             echo "PASSED=true" >> $GITHUB_ENV
+          else
+            echo "PASSED=false" >> $GITHUB_ENV
+            exit $EVAL_EXIT
           fi
 
+      # Only comment on PR runs (prevents errors on manual workflow_dispatch runs)
       - name: Post PR Comment
-        if: always()
+        if: always() && github.event_name == 'pull_request'
         uses: actions/github-script@v6
         with:
           script: |
             const passed = process.env.PASSED === 'true';
-            const score = process.env.FAITHFULNESS_SCORE || 'N/A';
             const statusIcon = passed ? '✅' : '❌';
-
-            const body = `### Prompt Evaluation Report ${statusIcon}\n\n**Mean Faithfulness Score:** \`${score}\`\n\n*(Threshold: 0.75)*\n\n${passed ? 'Looks good to merge!' : 'Please revise the prompt to reduce hallucinations before merging.'}`;
+            const body = [
+              `### LLM-as-a-Judge Evaluation Report ${statusIcon}`,
+              '',
+              '| Metric | Result |',
+              '| :--- | :--- |',
+              `| **Mean Faithfulness** | \`${process.env.FAITHFULNESS || 'N/A'}\` *(Threshold: 0.75)* |`,
+              `| **Pass Rate** | \`${process.env.SUCCESS_RATE || 'N/A'}%\` |`,
+              `| **Jira Retrieval Hit Rate** | \`${process.env.RETRIEVAL_HIT || 'N/A'}%\` |`,
+              `| **Semantic Cache Hit Rate** | \`${process.env.CACHE_HIT || 'N/A'}%\` |`,
+              `| **p95 Latency** | \`${process.env.P95_LATENCY || 'N/A'}s\` |`,
+              `| **Est. Cost / 1,000 req** | \`$${process.env.COST_1K || 'N/A'}\` |`,
+              '',
+              passed
+                ? '🟢 Quality gate passed — ready to merge.'
+                : '🚨 Quality gate failed — check `evals/eval_report.json` before merging.'
+            ].join('\n');
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: body
-            })
+            });

@@ -1,0 +1,522 @@
+[
+  {
+    "id": "case_001",
+    "category": "standard_chat",
+    "payload": {
+      "message": "Explain what a REST API is in one sentence.",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["HTTP", "stateless", "resource"]
+  },
+  {
+    "id": "case_002",
+    "category": "standard_chat",
+    "payload": {
+      "message": "How does gRPC differ from REST in one sentence?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["HTTP/2", "Protocol Buffers", "binary"]
+  },
+  {
+    "id": "case_003",
+    "category": "standard_chat",
+    "payload": {
+      "message": "Why is Redis commonly used for caching?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["in-memory", "key-value", "fast"]
+  },
+  {
+    "id": "case_004",
+    "category": "standard_chat",
+    "payload": {
+      "message": "What is a JWT and how is it verified?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["token", "signature", "payload"]
+  },
+  {
+    "id": "case_005",
+    "category": "standard_chat",
+    "payload": {
+      "message": "Explain Server-Sent Events (SSE) in one sentence.",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["HTTP", "server", "stream"]
+  },
+  {
+    "id": "case_006",
+    "category": "standard_chat",
+    "payload": {
+      "message": "How do WebSockets differ from SSE?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["bidirectional", "full-duplex", "one-way"]
+  },
+  {
+    "id": "case_007",
+    "category": "standard_chat",
+    "payload": {
+      "message": "What is OpenTelemetry used for in distributed tracing?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["spans", "traces", "observability"]
+  },
+  {
+    "id": "case_008",
+    "category": "standard_chat",
+    "payload": {
+      "message": "How does Prometheus collect metrics from services?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["scrape", "HTTP", "time-series"]
+  },
+  {
+    "id": "case_009",
+    "category": "standard_chat",
+    "payload": {
+      "message": "How do Docker containers differ from virtual machines?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["host kernel", "lightweight", "isolation"]
+  },
+  {
+    "id": "case_010",
+    "category": "standard_chat",
+    "payload": {
+      "message": "What do the four letters in database ACID stand for?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["Atomicity", "Consistency", "Isolation", "Durability"]
+  },
+  {
+    "id": "case_011",
+    "category": "standard_chat",
+    "payload": {
+      "message": "How does semantic caching work in AI gateways?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["embeddings", "similarity", "cached response"]
+  },
+  {
+    "id": "case_012",
+    "category": "standard_chat",
+    "payload": {
+      "message": "What does cosine similarity measure between two vectors?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["angle", "vectors", "similarity"]
+  },
+  {
+    "id": "case_013",
+    "category": "standard_chat",
+    "payload": {
+      "message": "Why is FastAPI well suited for async Python microservices?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["ASGI", "async", "non-blocking"]
+  },
+  {
+    "id": "case_014",
+    "category": "standard_chat",
+    "payload": {
+      "message": "What is the purpose of API rate limiting?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["limit requests", "abuse", "availability"]
+  },
+  {
+    "id": "case_015",
+    "category": "standard_chat",
+    "payload": {
+      "message": "What problem does the circuit breaker pattern solve in microservices?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["cascading failures", "fail fast", "downstream"]
+  },
+  {
+    "id": "case_016",
+    "category": "standard_chat",
+    "payload": {
+      "message": "How does exponential backoff work when retrying failed API calls?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["retry", "increasing delay", "backoff"]
+  },
+  {
+    "id": "case_017",
+    "category": "standard_chat",
+    "payload": {
+      "message": "What is Retrieval-Augmented Generation (RAG) in one sentence?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["retrieve", "external context", "generation"]
+  },
+  {
+    "id": "case_018",
+    "category": "standard_chat",
+    "payload": {
+      "message": "What is a canary release in software deployment?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["small subset", "traffic", "risk"]
+  },
+  {
+    "id": "case_019",
+    "category": "standard_chat",
+    "payload": {
+      "message": "What does p95 latency mean?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["95%", "requests", "faster"]
+  },
+  {
+    "id": "case_020",
+    "category": "standard_chat",
+    "payload": {
+      "message": "What is Time to First Token (TTFT) in streaming LLMs?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["first token", "latency", "request"]
+  },
+
+  {
+    "id": "case_021",
+    "category": "jira_context",
+    "payload": {
+      "message": "Summarize the status of this ticket.",
+      "session_id": "eval_user",
+      "prompt_version": "v1",
+      "jira_ticket": "PROJ-123"
+    },
+    "expected_keywords": ["PROJ-123", "IN PROGRESS"],
+    "retrieval_expected": ["PROJ-123", "progress"]
+  },
+  {
+    "id": "case_022",
+    "category": "jira_context",
+    "payload": {
+      "message": "Is this Jira ticket finished yet, or is work still underway? Include the ticket ID.",
+      "session_id": "eval_user",
+      "prompt_version": "v1",
+      "jira_ticket": "PROJ-123"
+    },
+    "expected_keywords": ["PROJ-123", "IN PROGRESS"],
+    "retrieval_expected": ["PROJ-123", "progress"]
+  },
+  {
+    "id": "case_023",
+    "category": "jira_context",
+    "payload": {
+      "message": "Draft a one-line Slack status update for this Jira issue.",
+      "session_id": "eval_user",
+      "prompt_version": "v1",
+      "jira_ticket": "PROJ-123"
+    },
+    "expected_keywords": ["PROJ-123", "IN PROGRESS"],
+    "retrieval_expected": ["PROJ-123", "progress"]
+  },
+  {
+    "id": "case_024",
+    "category": "jira_context",
+    "payload": {
+      "message": "Give a single bullet point stating this ticket's ID and current workflow state.",
+      "session_id": "eval_user",
+      "prompt_version": "v1",
+      "jira_ticket": "PROJ-123"
+    },
+    "expected_keywords": ["PROJ-123", "IN PROGRESS"],
+    "retrieval_expected": ["PROJ-123", "progress"]
+  },
+  {
+    "id": "case_025",
+    "category": "jira_context",
+    "payload": {
+      "message": "Which Jira ticket ID is linked here, and what stage is it in right now?",
+      "session_id": "eval_user",
+      "prompt_version": "v1",
+      "jira_ticket": "PROJ-123"
+    },
+    "expected_keywords": ["PROJ-123", "IN PROGRESS"],
+    "retrieval_expected": ["PROJ-123", "progress"]
+  },
+  {
+    "id": "case_026",
+    "category": "jira_context",
+    "payload": {
+      "message": "Confirm whether this ticket is done or still in progress, citing its ID.",
+      "session_id": "eval_user",
+      "prompt_version": "v1",
+      "jira_ticket": "PROJ-123"
+    },
+    "expected_keywords": ["PROJ-123", "IN PROGRESS"],
+    "retrieval_expected": ["PROJ-123", "progress"]
+  },
+  {
+    "id": "case_027",
+    "category": "jira_context",
+    "payload": {
+      "message": "Write a brief daily standup update based on this Jira ticket.",
+      "session_id": "eval_user",
+      "prompt_version": "v1",
+      "jira_ticket": "PROJ-123"
+    },
+    "expected_keywords": ["PROJ-123", "IN PROGRESS"],
+    "retrieval_expected": ["PROJ-123", "progress"]
+  },
+  {
+    "id": "case_028",
+    "category": "jira_context",
+    "payload": {
+      "message": "Extract the ticket identifier and status from the attached Jira context.",
+      "session_id": "eval_user",
+      "prompt_version": "v1",
+      "jira_ticket": "PROJ-123"
+    },
+    "expected_keywords": ["PROJ-123", "IN PROGRESS"],
+    "retrieval_expected": ["PROJ-123", "progress"]
+  },
+
+  {
+    "id": "case_029",
+    "category": "cache_verification",
+    "payload": {
+      "message": "Explain what a REST API is in one sentence.",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["HTTP", "stateless"]
+  },
+  {
+    "id": "case_030",
+    "category": "cache_verification",
+    "payload": {
+      "message": "How does gRPC differ from REST in one sentence?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["HTTP/2", "Protocol Buffers"]
+  },
+  {
+    "id": "case_031",
+    "category": "cache_verification",
+    "payload": {
+      "message": "Why is Redis commonly used for caching?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["in-memory", "fast"]
+  },
+  {
+    "id": "case_032",
+    "category": "cache_verification",
+    "payload": {
+      "message": "What is a JWT and how is it verified?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["token", "signature"]
+  },
+  {
+    "id": "case_033",
+    "category": "cache_verification",
+    "payload": {
+      "message": "Explain Server-Sent Events (SSE) in one sentence.",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["HTTP", "stream"]
+  },
+  {
+    "id": "case_034",
+    "category": "cache_verification",
+    "payload": {
+      "message": "How do WebSockets differ from SSE?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["bidirectional", "one-way"]
+  },
+  {
+    "id": "case_035",
+    "category": "cache_verification",
+    "payload": {
+      "message": "Explain what a REST API is in a single sentence.",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["HTTP", "stateless"]
+  },
+  {
+    "id": "case_036",
+    "category": "cache_verification",
+    "payload": {
+      "message": "Why do developers commonly use Redis for caching?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["in-memory", "fast"]
+  },
+  {
+    "id": "case_037",
+    "category": "cache_verification",
+    "payload": {
+      "message": "Describe Server-Sent Events (SSE) in one sentence.",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["HTTP", "stream"]
+  },
+  {
+    "id": "case_038",
+    "category": "cache_verification",
+    "payload": {
+      "message": "What is the role of OpenTelemetry in distributed tracing?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["spans", "traces"]
+  },
+  {
+    "id": "case_039",
+    "category": "cache_verification",
+    "payload": {
+      "message": "How does semantic caching work in an AI gateway?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["embeddings", "similarity"]
+  },
+  {
+    "id": "case_040",
+    "category": "cache_verification",
+    "payload": {
+      "message": "What does p95 latency measure?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["95%", "requests"]
+  },
+
+  {
+    "id": "case_041",
+    "category": "numeric_guardrail",
+    "payload": {
+      "message": "What does HTTP status code 404 mean in one sentence?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["404", "Not Found"]
+  },
+  {
+    "id": "case_042",
+    "category": "numeric_guardrail",
+    "payload": {
+      "message": "What does HTTP status code 503 mean in one sentence?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["503", "Service Unavailable"]
+  },
+  {
+    "id": "case_043",
+    "category": "numeric_guardrail",
+    "payload": {
+      "message": "What does HTTP status code 200 mean in one sentence?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["200", "OK", "success"]
+  },
+  {
+    "id": "case_044",
+    "category": "numeric_guardrail",
+    "payload": {
+      "message": "What does HTTP status code 401 mean in one sentence?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["401", "Unauthorized", "authentication"]
+  },
+  {
+    "id": "case_045",
+    "category": "numeric_guardrail",
+    "payload": {
+      "message": "Which database uses default port 5432?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["5432", "PostgreSQL"]
+  },
+  {
+    "id": "case_046",
+    "category": "numeric_guardrail",
+    "payload": {
+      "message": "Which database uses default port 6379?",
+      "session_id": "eval_user",
+      "prompt_version": "v1"
+    },
+    "expected_keywords": ["6379", "Redis"]
+  },
+
+  {
+    "id": "case_047",
+    "category": "prompt_version_v2",
+    "payload": {
+      "message": "Explain what a REST API is in one sentence.",
+      "session_id": "eval_user",
+      "prompt_version": "v2"
+    },
+    "expected_keywords": ["HTTP", "stateless", "resource"]
+  },
+  {
+    "id": "case_048",
+    "category": "prompt_version_v2",
+    "payload": {
+      "message": "What is the main role of an API gateway?",
+      "session_id": "eval_user",
+      "prompt_version": "v2"
+    },
+    "expected_keywords": ["entry point", "routing", "requests"]
+  },
+  {
+    "id": "case_049",
+    "category": "prompt_version_v2",
+    "payload": {
+      "message": "Why use asyncpg with FastAPI and PostgreSQL?",
+      "session_id": "eval_user",
+      "prompt_version": "v2"
+    },
+    "expected_keywords": ["async", "PostgreSQL", "performance"]
+  },
+  {
+    "id": "case_050",
+    "category": "prompt_version_v2",
+    "payload": {
+      "message": "What is the main role of an API gateway?",
+      "session_id": "eval_user",
+      "prompt_version": "v2"
+    },
+    "expected_keywords": ["entry point", "routing"]
+  }
+]

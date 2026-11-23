@@ -1,0 +1,744 @@
+{
+  "summary": {
+    "total_cases": 50,
+    "passed_cases": 46,
+    "success_rate_pct": 92.0,
+    "mean_faithfulness": 0.945,
+    "retrieval_hit_rate_pct": 87.5,
+    "cache_hit_rate_pct": 31.0,
+    "cache_metric_source": "Prometheus (13 hits / 42 lookups)",
+    "avg_latency_sec": 0.576,
+    "p50_latency_sec": 0.581,
+    "p95_latency_sec": 1.24,
+    "uncached_cost_per_1k_usd": 0.0248,
+    "effective_cost_per_1k_usd": 0.0172
+  },
+  "results": [
+    {
+      "id": "case_001",
+      "category": "standard_chat",
+      "prompt": "Explain what a REST API is in one sentence.",
+      "expected_keywords": [
+        "HTTP",
+        "stateless",
+        "resource"
+      ],
+      "actual_response": "A REST API is a web interface that uses standard HTTP methods (GET, POST, PUT, DELETE, etc.) to manipulate resources identified by URLs, returning data in formats like JSON or XML.",
+      "score": 0.8,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies HTTP and resources, but omits the concept of statelessness.",
+      "latency_sec": 0.915
+    },
+    {
+      "id": "case_002",
+      "category": "standard_chat",
+      "prompt": "How does gRPC differ from REST in one sentence?",
+      "expected_keywords": [
+        "HTTP/2",
+        "Protocol Buffers",
+        "binary"
+      ],
+      "actual_response": "gRPC uses HTTP/2 and binary protocol buffers for efficient, strongly\u2011typed, bi\u2011directional streaming, whereas REST typically relies on HTTP/1.1 with text\u2011based JSON and stateless request/response patterns.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately includes all expected facts: HTTP/2, Protocol Buffers, and binary format.",
+      "latency_sec": 0.412
+    },
+    {
+      "id": "case_003",
+      "category": "standard_chat",
+      "prompt": "Why is Redis commonly used for caching?",
+      "expected_keywords": [
+        "in-memory",
+        "key-value",
+        "fast"
+      ],
+      "actual_response": "Redis is an in\u2011memory key\u2011value store that offers sub\u2011millisecond latency and built\u2011in expiry, making it ideal for fast, transient data. Its rich data types, atomic operations, and optional persistence give developers flexible, highly performant cache solutions.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately includes all expected concepts: 'in-memory', 'key-value', and 'fast' (via 'sub-millisecond latency' and 'fast, transient data').",
+      "latency_sec": 0.614
+    },
+    {
+      "id": "case_004",
+      "category": "standard_chat",
+      "prompt": "What is a JWT and how is it verified?",
+      "expected_keywords": [
+        "token",
+        "signature",
+        "payload"
+      ],
+      "actual_response": "A JWT (JSON Web Token) is a compact, URL\u2011safe string that encodes a header, payload, and a cryptographic signature, usually used for stateless authentication.  Verification involves decoding the header, using the shared secret (HMAC) or public key (RSA/ECDSA) to confirm the signature, and then validating claims such as expiration, issuer, and audience.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately defines a JWT and explicitly mentions the required concepts of token, signature, and payload while explaining the verification process.",
+      "latency_sec": 0.741
+    },
+    {
+      "id": "case_005",
+      "category": "standard_chat",
+      "prompt": "Explain Server-Sent Events (SSE) in one sentence.",
+      "expected_keywords": [
+        "HTTP",
+        "server",
+        "stream"
+      ],
+      "actual_response": "Server\u2011Sent Events (SSE) is a browser feature that lets a server push real\u2011time updates to a client over a single, long\u2011lived HTTP connection using a simple text/event\u2011stream format.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately explains SSE and includes all required concepts: HTTP, server, and stream (via 'text/event-stream' and 'push... updates').",
+      "latency_sec": 0.646
+    },
+    {
+      "id": "case_006",
+      "category": "standard_chat",
+      "prompt": "How do WebSockets differ from SSE?",
+      "expected_keywords": [
+        "bidirectional",
+        "full-duplex",
+        "one-way"
+      ],
+      "actual_response": "WebSockets provide a full\u2011duplex, persistent TCP connection that lets both client and server send messages arbitrarily, while Server\u2011Sent Events (SSE) use a simple, unidirectional HTTP stream that only allows the server to push updates to the client. SSE is easier to implement and automatically reconnects, but lacks the bidirectional, low\u2011latency capabilities of WebSockets.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately describes WebSockets as full-duplex and bidirectional, and SSE as unidirectional (one-way), covering all expected facts.",
+      "latency_sec": 0.647
+    },
+    {
+      "id": "case_007",
+      "category": "standard_chat",
+      "prompt": "What is OpenTelemetry used for in distributed tracing?",
+      "expected_keywords": [
+        "spans",
+        "traces",
+        "observability"
+      ],
+      "actual_response": "OpenTelemetry is an open\u2011source observability framework that instruments applications to emit distributed traces, metrics, and logs. It enables consistent collection, correlation, and export of tracing data across microservices for end\u2011to\u2011end visibility.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies OpenTelemetry as an observability framework used for distributed tracing, covering all expected concepts.",
+      "latency_sec": 0.539
+    },
+    {
+      "id": "case_008",
+      "category": "standard_chat",
+      "prompt": "How does Prometheus collect metrics from services?",
+      "expected_keywords": [
+        "scrape",
+        "HTTP",
+        "time-series"
+      ],
+      "actual_response": "Prometheus scrapes metrics by making HTTP GET requests to a `/metrics` endpoint on each service, which exposes data in a text format. It can also receive data via a Pushgateway when a service cannot be scraped directly.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies 'scrape' and 'HTTP' as key mechanisms, and while 'time-series' is not explicitly named, the description of collecting metrics from endpoints implies the time-series nature of the data, satisfying the semantic intent of the expected facts.",
+      "latency_sec": 0.486
+    },
+    {
+      "id": "case_009",
+      "category": "standard_chat",
+      "prompt": "How do Docker containers differ from virtual machines?",
+      "expected_keywords": [
+        "host kernel",
+        "lightweight",
+        "isolation"
+      ],
+      "actual_response": "Docker containers share the host OS kernel and run as isolated processes, so they\u2019re lightweight and start in milliseconds; virtual machines emulate complete hardware, each with its own OS, making them heavier and slower to boot. Thus containers provide faster, resource\u2011efficient isolation, while VMs offer stronger isolation at the cost of more overhead.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately covers all expected facts: sharing the host kernel, being lightweight, and providing isolation.",
+      "latency_sec": 0.583
+    },
+    {
+      "id": "case_010",
+      "category": "standard_chat",
+      "prompt": "What do the four letters in database ACID stand for?",
+      "expected_keywords": [
+        "Atomicity",
+        "Consistency",
+        "Isolation",
+        "Durability"
+      ],
+      "actual_response": "ACID stands for **Atomicity, Consistency, Isolation, Durability**\u2014the four properties that guarantee reliable database transactions.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies all four components of ACID (Atomicity, Consistency, Isolation, Durability) as requested.",
+      "latency_sec": 0.586
+    },
+    {
+      "id": "case_011",
+      "category": "standard_chat",
+      "prompt": "How does semantic caching work in AI gateways?",
+      "expected_keywords": [
+        "embeddings",
+        "similarity",
+        "cached response"
+      ],
+      "actual_response": "Semantic caching in AI gateways stores the semantic embeddings or context of past query results, so that when a new request with similar meaning arrives, the system can quickly retrieve or re\u2011rank cached responses instead of re\u2011computing from scratch. It updates the cache when underlying data or model changes, ensuring relevance while reducing latency and compute load.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately covers all expected concepts: it explicitly mentions 'embeddings', implies 'similarity' through 'similar meaning', and refers to 'cached responses'.",
+      "latency_sec": 0.549
+    },
+    {
+      "id": "case_012",
+      "category": "standard_chat",
+      "prompt": "What does cosine similarity measure between two vectors?",
+      "expected_keywords": [
+        "angle",
+        "vectors",
+        "similarity"
+      ],
+      "actual_response": "Cosine similarity measures the cosine of the angle between two vectors, indicating how closely they point in the same direction. Values near\u202f1 mean high similarity, 0 means orthogonal, and \u20131 means opposite.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately defines cosine similarity by referencing the angle between vectors and explaining the resulting similarity score.",
+      "latency_sec": 0.671
+    },
+    {
+      "id": "case_013",
+      "category": "standard_chat",
+      "prompt": "Why is FastAPI well suited for async Python microservices?",
+      "expected_keywords": [
+        "ASGI",
+        "async",
+        "non-blocking"
+      ],
+      "actual_response": "FastAPI is built on ASGI and fully supports async/await, giving it a non\u2011blocking, high\u2011performance core that scales well for microservices. Its type\u2011hinting, Pydantic validation, auto\u2011docs, and lightweight dependency system make rapid, modular, and maintainable microservice development straightforward.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately includes all expected concepts: ASGI, async, and non-blocking.",
+      "latency_sec": 0.808
+    },
+    {
+      "id": "case_014",
+      "category": "standard_chat",
+      "prompt": "What is the purpose of API rate limiting?",
+      "expected_keywords": [
+        "limit requests",
+        "abuse",
+        "availability"
+      ],
+      "actual_response": "API rate limiting restricts how many requests a client can make in a given period to prevent abuse, protect server resources, and maintain overall service stability and fairness. It ensures reliable performance for all users by throttling excessive traffic.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately covers limiting requests, preventing abuse, and maintaining availability/stability.",
+      "latency_sec": 0.697
+    },
+    {
+      "id": "case_015",
+      "category": "standard_chat",
+      "prompt": "What problem does the circuit breaker pattern solve in microservices?",
+      "expected_keywords": [
+        "cascading failures",
+        "fail fast",
+        "downstream"
+      ],
+      "actual_response": "The circuit breaker pattern prevents cascading failures by detecting when a downstream service is unresponsive or failing and then \u201ctripping\u201d to stop further requests, allowing the system to fall back or retry safely. This protects overall reliability and keeps latency from growing unbounded.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately addresses all expected concepts: it explicitly mentions preventing 'cascading failures' and detecting issues with 'downstream' services, and the mechanism of 'tripping' to stop requests effectively conveys the 'fail fast' principle.",
+      "latency_sec": 0.522
+    },
+    {
+      "id": "case_016",
+      "category": "standard_chat",
+      "prompt": "How does exponential backoff work when retrying failed API calls?",
+      "expected_keywords": [
+        "retry",
+        "increasing delay",
+        "backoff"
+      ],
+      "actual_response": "Exponential backoff waits longer after each retry, usually doubling the interval (e.g., 1\u202fs, 2\u202fs, 4\u202fs, 8\u202fs\u2026) and often adding random jitter to avoid thundering herd effects. This reduces load on the service while still giving it time to recover.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately explains exponential backoff by mentioning retries, increasing delays (doubling intervals), and the concept of backoff.",
+      "latency_sec": 0.574
+    },
+    {
+      "id": "case_017",
+      "category": "standard_chat",
+      "prompt": "What is Retrieval-Augmented Generation (RAG) in one sentence?",
+      "expected_keywords": [
+        "retrieve",
+        "external context",
+        "generation"
+      ],
+      "actual_response": "Retrieval\u2011Augmented Generation (RAG) is a method that first retrieves relevant documents from a large corpus and then feeds those snippets into a generative language model to produce more accurate and knowledge\u2011rich responses.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately defines RAG by explicitly mentioning retrieving documents (retrieve), using them as context (external context), and feeding them into a model to produce responses (generation).",
+      "latency_sec": 0.551
+    },
+    {
+      "id": "case_018",
+      "category": "standard_chat",
+      "prompt": "What is a canary release in software deployment?",
+      "expected_keywords": [
+        "small subset",
+        "traffic",
+        "risk"
+      ],
+      "actual_response": "A canary release is a deployment strategy that rolls out a new software version to a small subset of users or servers first, then gradually expands once no critical issues are detected. It helps catch bugs early while keeping the majority of the user base on the stable version.",
+      "score": 0.8,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies the 'small subset' aspect and implies 'risk' mitigation by catching bugs, but it omits the specific concept of 'traffic' routing mentioned in the expected facts.",
+      "latency_sec": 0.591
+    },
+    {
+      "id": "case_019",
+      "category": "standard_chat",
+      "prompt": "What does p95 latency mean?",
+      "expected_keywords": [
+        "95%",
+        "requests",
+        "faster"
+      ],
+      "actual_response": "P95 latency is the 95th\u2011percentile latency \u2013 the time threshold below which 95\u202f% of requests finish. It indicates that only 5\u202f% of requests take longer than that value.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly defines P95 latency as the 95th percentile, explicitly mentioning '95%' and 'requests', and semantically conveys that 95% of requests are faster than this threshold.",
+      "latency_sec": 0.523
+    },
+    {
+      "id": "case_020",
+      "category": "standard_chat",
+      "prompt": "What is Time to First Token (TTFT) in streaming LLMs?",
+      "expected_keywords": [
+        "first token",
+        "latency",
+        "request"
+      ],
+      "actual_response": "Time to First Token (TTFT) is the latency from when a user sends a prompt to when the model emits the very first token of its output, indicating the model\u2019s initial response speed. It\u2019s a key metric for measuring how quickly a streaming LLM starts generating results.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately defines TTFT as the latency from request to the first token, covering all expected concepts.",
+      "latency_sec": 0.562
+    },
+    {
+      "id": "case_021",
+      "category": "jira_context",
+      "prompt": "Summarize the status of this ticket.",
+      "expected_keywords": [
+        "PROJ-123",
+        "IN PROGRESS"
+      ],
+      "actual_response": "Ticket PROJ\u2011123 is currently in progress, working to resolve the login failures that appeared after the v2.0 deployment.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies the ticket ID PROJ-123 and its status as in progress, matching the expected facts.",
+      "latency_sec": 1.579
+    },
+    {
+      "id": "case_022",
+      "category": "jira_context",
+      "prompt": "Is this Jira ticket finished yet, or is work still underway? Include the ticket ID.",
+      "expected_keywords": [
+        "PROJ-123",
+        "IN PROGRESS"
+      ],
+      "actual_response": "PROJ\u2011123 is still underway; the status is \u201cIN PROGRESS.\u201d",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies the ticket ID PROJ-123 and accurately states the status as IN PROGRESS, matching all expected facts.",
+      "latency_sec": 1.268
+    },
+    {
+      "id": "case_023",
+      "category": "jira_context",
+      "prompt": "Draft a one-line Slack status update for this Jira issue.",
+      "expected_keywords": [
+        "PROJ-123",
+        "IN PROGRESS"
+      ],
+      "actual_response": "PROJ\u2011123: Users experiencing login failures after v2.0 deployment; investigation underway.",
+      "score": 0.5,
+      "verdict": "FAIL",
+      "reason": "The response includes the ticket ID but fails to explicitly state the status as 'IN PROGRESS', instead using the phrase 'investigation underway' which is semantically related but does not match the specific expected fact.",
+      "latency_sec": 1.206
+    },
+    {
+      "id": "case_024",
+      "category": "jira_context",
+      "prompt": "Give a single bullet point stating this ticket's ID and current workflow state.",
+      "expected_keywords": [
+        "PROJ-123",
+        "IN PROGRESS"
+      ],
+      "actual_response": "- **Ticket PROJ-123**: **Status** \u2013 *IN PROGRESS*",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies the ticket ID PROJ-123 and its status as IN PROGRESS in a single bullet point.",
+      "latency_sec": 1.176
+    },
+    {
+      "id": "case_025",
+      "category": "jira_context",
+      "prompt": "Which Jira ticket ID is linked here, and what stage is it in right now?",
+      "expected_keywords": [
+        "PROJ-123",
+        "IN PROGRESS"
+      ],
+      "actual_response": "The ticket ID is **PROJ-123** and it is currently **IN PROGRESS**.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies the ticket ID as PROJ-123 and the stage as IN PROGRESS, matching all expected facts.",
+      "latency_sec": 1.13
+    },
+    {
+      "id": "case_026",
+      "category": "jira_context",
+      "prompt": "Confirm whether this ticket is done or still in progress, citing its ID.",
+      "expected_keywords": [
+        "PROJ-123",
+        "IN PROGRESS"
+      ],
+      "actual_response": "Ticket PROJ-123 is currently in progress.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies the ticket ID PROJ-123 and its status as in progress, matching all expected facts.",
+      "latency_sec": 1.301
+    },
+    {
+      "id": "case_027",
+      "category": "jira_context",
+      "prompt": "Write a brief daily standup update based on this Jira ticket.",
+      "expected_keywords": [
+        "PROJ-123",
+        "IN PROGRESS"
+      ],
+      "actual_response": "PROJ\u2011123 remains IN PROGRESS: users are still unable to log in after the v2.0 deployment. Investigation is ongoing and a hot\u2011fix is targeted for deployment by the end of today.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly includes the ticket ID PROJ-123 and the status IN PROGRESS, matching the expected facts.",
+      "latency_sec": 1.197
+    },
+    {
+      "id": "case_028",
+      "category": "jira_context",
+      "prompt": "Extract the ticket identifier and status from the attached Jira context.",
+      "expected_keywords": [
+        "PROJ-123",
+        "IN PROGRESS"
+      ],
+      "actual_response": "Ticket identifier: **PROJ-123**  Status: **IN PROGRESS**",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly extracts the ticket identifier PROJ-123 and the status IN PROGRESS as specified in the expected facts.",
+      "latency_sec": 0.86
+    },
+    {
+      "id": "case_029",
+      "category": "cache_verification",
+      "prompt": "Explain what a REST API is in one sentence.",
+      "expected_keywords": [
+        "HTTP",
+        "stateless"
+      ],
+      "actual_response": "A REST API is a web interface that uses standard HTTP methods (GET, POST, PUT, DELETE, etc.) to manipulate resources identified by URLs, returning data in formats like JSON or XML.",
+      "score": 0.5,
+      "verdict": "FAIL",
+      "reason": "The response correctly mentions HTTP but fails to include the required concept of 'statelessness'.",
+      "latency_sec": 0.041
+    },
+    {
+      "id": "case_030",
+      "category": "cache_verification",
+      "prompt": "How does gRPC differ from REST in one sentence?",
+      "expected_keywords": [
+        "HTTP/2",
+        "Protocol Buffers"
+      ],
+      "actual_response": "gRPC uses HTTP/2 and binary protocol buffers for efficient, strongly\u2011typed, bi\u2011directional streaming, whereas REST typically relies on HTTP/1.1 with text\u2011based JSON and stateless request/response patterns.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies HTTP/2 and Protocol Buffers as key differentiators for gRPC compared to REST.",
+      "latency_sec": 0.054
+    },
+    {
+      "id": "case_031",
+      "category": "cache_verification",
+      "prompt": "Why is Redis commonly used for caching?",
+      "expected_keywords": [
+        "in-memory",
+        "fast"
+      ],
+      "actual_response": "Redis is an in\u2011memory key\u2011value store that offers sub\u2011millisecond latency and built\u2011in expiry, making it ideal for fast, transient data. Its rich data types, atomic operations, and optional persistence give developers flexible, highly performant cache solutions.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies Redis as an in-memory store and explicitly mentions its fast performance characteristics.",
+      "latency_sec": 0.04
+    },
+    {
+      "id": "case_032",
+      "category": "cache_verification",
+      "prompt": "What is a JWT and how is it verified?",
+      "expected_keywords": [
+        "token",
+        "signature"
+      ],
+      "actual_response": "A JWT (JSON Web Token) is a compact, URL\u2011safe string that encodes a header, payload, and a cryptographic signature, usually used for stateless authentication.  Verification involves decoding the header, using the shared secret (HMAC) or public key (RSA/ECDSA) to confirm the signature, and then validating claims such as expiration, issuer, and audience.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies JWT as a token and explicitly mentions the signature in both the definition and verification process.",
+      "latency_sec": 0.043
+    },
+    {
+      "id": "case_033",
+      "category": "cache_verification",
+      "prompt": "Explain Server-Sent Events (SSE) in one sentence.",
+      "expected_keywords": [
+        "HTTP",
+        "stream"
+      ],
+      "actual_response": "Server\u2011Sent Events (SSE) is a browser feature that lets a server push real\u2011time updates to a client over a single, long\u2011lived HTTP connection using a simple text/event\u2011stream format.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies SSE as a mechanism for real-time updates over a single HTTP connection, covering both required concepts.",
+      "latency_sec": 0.096
+    },
+    {
+      "id": "case_034",
+      "category": "cache_verification",
+      "prompt": "How do WebSockets differ from SSE?",
+      "expected_keywords": [
+        "bidirectional",
+        "one-way"
+      ],
+      "actual_response": "WebSockets provide a full\u2011duplex, persistent TCP connection that lets both client and server send messages arbitrarily, while Server\u2011Sent Events (SSE) use a simple, unidirectional HTTP stream that only allows the server to push updates to the client. SSE is easier to implement and automatically reconnects, but lacks the bidirectional, low\u2011latency capabilities of WebSockets.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies WebSockets as bidirectional (full-duplex) and SSE as one-way (unidirectional), covering all expected facts.",
+      "latency_sec": 0.048
+    },
+    {
+      "id": "case_035",
+      "category": "cache_verification",
+      "prompt": "Explain what a REST API is in a single sentence.",
+      "expected_keywords": [
+        "HTTP",
+        "stateless"
+      ],
+      "actual_response": "A REST API is a web interface that uses standard HTTP methods (GET, POST, PUT, DELETE, etc.) to manipulate resources identified by URLs, returning data in formats like JSON or XML.",
+      "score": 0.5,
+      "verdict": "FAIL",
+      "reason": "The response correctly mentions HTTP but fails to include the required concept of 'statelessness'.",
+      "latency_sec": 0.044
+    },
+    {
+      "id": "case_036",
+      "category": "cache_verification",
+      "prompt": "Why do developers commonly use Redis for caching?",
+      "expected_keywords": [
+        "in-memory",
+        "fast"
+      ],
+      "actual_response": "Redis is an in\u2011memory key\u2011value store that offers sub\u2011millisecond latency and built\u2011in expiry, making it ideal for fast, transient data. Its rich data types, atomic operations, and optional persistence give developers flexible, highly performant cache solutions.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response explicitly mentions that Redis is an 'in-memory' store and describes it as 'fast' (via 'sub-millisecond latency' and 'highly performant'), covering all expected facts.",
+      "latency_sec": 0.038
+    },
+    {
+      "id": "case_037",
+      "category": "cache_verification",
+      "prompt": "Describe Server-Sent Events (SSE) in one sentence.",
+      "expected_keywords": [
+        "HTTP",
+        "stream"
+      ],
+      "actual_response": "Server\u2011Sent Events (SSE) is a browser feature that lets a server push real\u2011time updates to a client over a single, long\u2011lived HTTP connection using a simple text/event\u2011stream format.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately describes SSE as a mechanism for real-time updates over a single HTTP connection, covering both required concepts.",
+      "latency_sec": 0.051
+    },
+    {
+      "id": "case_038",
+      "category": "cache_verification",
+      "prompt": "What is the role of OpenTelemetry in distributed tracing?",
+      "expected_keywords": [
+        "spans",
+        "traces"
+      ],
+      "actual_response": "OpenTelemetry is an open\u2011source observability framework that instruments applications to emit distributed traces, metrics, and logs. It enables consistent collection, correlation, and export of tracing data across microservices for end\u2011to\u2011end visibility.",
+      "score": 0.8,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies the role of OpenTelemetry in distributed tracing and explicitly mentions 'traces', but it omits the specific concept of 'spans' required by the expected facts.",
+      "latency_sec": 0.037
+    },
+    {
+      "id": "case_039",
+      "category": "cache_verification",
+      "prompt": "How does semantic caching work in an AI gateway?",
+      "expected_keywords": [
+        "embeddings",
+        "similarity"
+      ],
+      "actual_response": "Semantic caching in AI gateways stores the semantic embeddings or context of past query results, so that when a new request with similar meaning arrives, the system can quickly retrieve or re\u2011rank cached responses instead of re\u2011computing from scratch. It updates the cache when underlying data or model changes, ensuring relevance while reducing latency and compute load.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies both 'embeddings' and 'similarity' (via 'similar meaning') as core components of semantic caching.",
+      "latency_sec": 0.039
+    },
+    {
+      "id": "case_040",
+      "category": "cache_verification",
+      "prompt": "What does p95 latency measure?",
+      "expected_keywords": [
+        "95%",
+        "requests"
+      ],
+      "actual_response": "P95 latency is the 95th\u2011percentile latency \u2013 the time threshold below which 95\u202f% of requests finish. It indicates that only 5\u202f% of requests take longer than that value.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies that p95 latency measures the 95th percentile, meaning 95% of requests finish below that threshold.",
+      "latency_sec": 0.109
+    },
+    {
+      "id": "case_041",
+      "category": "numeric_guardrail",
+      "prompt": "What does HTTP status code 404 mean in one sentence?",
+      "expected_keywords": [
+        "404",
+        "Not Found"
+      ],
+      "actual_response": "HTTP status code\u202f404 means the requested resource could not be found on the server.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies that HTTP status code 404 means the resource was not found.",
+      "latency_sec": 0.648
+    },
+    {
+      "id": "case_042",
+      "category": "numeric_guardrail",
+      "prompt": "What does HTTP status code 503 mean in one sentence?",
+      "expected_keywords": [
+        "503",
+        "Service Unavailable"
+      ],
+      "actual_response": "The 503 Service\u202fUnavailable status code means the server is temporarily unable to handle the request, usually because it\u2019s overloaded or down for maintenance.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies the status code 503 as 'Service Unavailable' and accurately describes its meaning.",
+      "latency_sec": 0.625
+    },
+    {
+      "id": "case_043",
+      "category": "numeric_guardrail",
+      "prompt": "What does HTTP status code 200 mean in one sentence?",
+      "expected_keywords": [
+        "200",
+        "OK",
+        "success"
+      ],
+      "actual_response": "HTTP 200\u202fOK indicates that the request succeeded and the server is returning the requested resource.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies the status code 200, the reason phrase OK, and the meaning of success.",
+      "latency_sec": 0.58
+    },
+    {
+      "id": "case_044",
+      "category": "numeric_guardrail",
+      "prompt": "What does HTTP status code 401 mean in one sentence?",
+      "expected_keywords": [
+        "401",
+        "Unauthorized",
+        "authentication"
+      ],
+      "actual_response": "HTTP 401 means the server requires authentication; the request lacks valid credentials and therefore cannot be processed.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies the status code 401 and explains that it signifies a lack of valid credentials, which aligns with the concepts of 'Unauthorized' and 'authentication'.",
+      "latency_sec": 0.634
+    },
+    {
+      "id": "case_045",
+      "category": "numeric_guardrail",
+      "prompt": "Which database uses default port 5432?",
+      "expected_keywords": [
+        "5432",
+        "PostgreSQL"
+      ],
+      "actual_response": "PostgreSQL uses 5432 as its default port.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies PostgreSQL as the database using default port 5432.",
+      "latency_sec": 0.547
+    },
+    {
+      "id": "case_046",
+      "category": "numeric_guardrail",
+      "prompt": "Which database uses default port 6379?",
+      "expected_keywords": [
+        "6379",
+        "Redis"
+      ],
+      "actual_response": "Redis uses the default port **6379**.",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies Redis as the database using default port 6379.",
+      "latency_sec": 0.451
+    },
+    {
+      "id": "case_047",
+      "category": "prompt_version_v2",
+      "prompt": "Explain what a REST API is in one sentence.",
+      "expected_keywords": [
+        "HTTP",
+        "stateless",
+        "resource"
+      ],
+      "actual_response": "A REST API be yer cursed, no\u2011frills, stateless ship that shovels data across the net, letting ye fetch, post, delete or update in one go\u2014no holdin\u2019 back, ye scurvy scrawl!",
+      "score": 0.33,
+      "verdict": "FAIL",
+      "reason": "The response mentions 'stateless' but fails to explicitly mention 'HTTP' or 'resource', and the pirate-themed language obscures the technical definition.",
+      "latency_sec": 0.721
+    },
+    {
+      "id": "case_048",
+      "category": "prompt_version_v2",
+      "prompt": "What is the main role of an API gateway?",
+      "expected_keywords": [
+        "entry point",
+        "routing",
+        "requests"
+      ],
+      "actual_response": "Arrr, listen up, ye land\u2011lubber! The main role of an API gateway be a damn port\u2011keeper, a one\u2011stop pirate post that does all the hard work for yer backend crew. It:1. **Routin\u2019 the Traf\u2011blar** \u2013 Sails all incoming requests straight to the proper ship (micro\u2011service) without ye having to chart the course yourself.  2. **Guardin\u2019 the Gates** \u2013 Checks that every scallywag (client) has the proper pass (API keys, JWTs, or whatever shiver\u2011the\u2011timbers auth ye use) before lettin\u2019 'em aboard.  3. **Throwin\u2019 in the Spices** \u2013 Adds a bit of magic like rate\u2011limitin\u2019, throttlin\u2019, or caching so yer fleet doesn\u2019t get swamped by a squall of traffic.  4. **Speakin\u2019 One Tongue** \u2013 Transforms the gibberish of different services into a single, tidy language for your mates on the front end.  In short, it\u2019s the grumpy, no\u2011nonsense bouncer that keeps the API seas orderly and stops the riff-raff from wreckin\u2019 yer ship. Cap\u2019n, that\u2019s the whole shebang! Arrr!",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately covers the expected concepts of routing and handling requests, and implicitly describes the gateway as the entry point through its 'port-keeper' and 'bouncer' metaphors.",
+      "latency_sec": 0.945
+    },
+    {
+      "id": "case_049",
+      "category": "prompt_version_v2",
+      "prompt": "Why use asyncpg with FastAPI and PostgreSQL?",
+      "expected_keywords": [
+        "async",
+        "PostgreSQL",
+        "performance"
+      ],
+      "actual_response": "Arr, ye scurvy sea\u2011dog!  If ye be swash\u2011bucklin\u2019 with FastAPI and a Postgres booty, ye best be usein\u2019 asyncpg or ye\u2019ll be walkin\u2019 the plank!  Here\u2019s why:- **Speed o\u2019 the Storm** \u2013 asyncpg\u2019s a lean, mean, async beast.  It talks to the database in one go, no extra fussin\u2019 like those slow\u2011poking ORMs.  When FastAPI\u2019s async engine runs, asyncpg keeps the pipeline chuggin\u2019 like a cannonball down a barrel.- **Low\u2011Level Control** \u2013 No meddlin\u2019 with \u201cmagic\u201d behind the curtain.  You send the exact SQL, get the exact rows, and you\u2019ll know every tick o\u2019 the clock.  That\u2019s the treasure when ye need fine\u2011tuned performance or custom queries.- **Memory\u2011Spar** \u2013 asyncpg keeps the heap light, so ye can run many concurrent connections without sinkin\u2019 the ship.  FastAPI can spawn a whole crew of coroutines, and asyncpg will handle them all with nary a splash of memory.- **Real\u2011Time Treasure Maps** \u2013 If ye\u2019re building real\u2011time services or websockets, asyncpg\u2019s async nature means you can keep the client alive and the database humming without blocking the whole crew.- **Error\u2011Free Swashbucklin\u2019** \u2013 It\u2019s battle\u2011tested, battle\u2011proof.  You get the same safety as libpq, but with async support.  No more \u201cdead on the water\u201d errors when the database\u2019s up in a storm.- **Compatibility with FastAPI\u2019s Async** \u2013 FastAPI expects coroutines; asyncpg returns coroutines, so you ain\u2019t forcing any \u201csync\u2011in\u2011async\u201d cursed curses.  You keep the whole chain clean and fast.So, matey, use asyncpg with FastAPI and Postgres if you want the wind in yer sails, the deck dry, and the treasure chest full of speed.  Any other driver be a lazy bilge rat that\u2019ll slow ye down.  Arr!",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response accurately covers all expected concepts (async, PostgreSQL, performance) despite the pirate-themed persona.",
+      "latency_sec": 1.057
+    },
+    {
+      "id": "case_050",
+      "category": "prompt_version_v2",
+      "prompt": "What is the main role of an API gateway?",
+      "expected_keywords": [
+        "entry point",
+        "routing"
+      ],
+      "actual_response": "Arrr, listen up, ye land\u2011lubber! The main role of an API gateway be a damn port\u2011keeper, a one\u2011stop pirate post that does all the hard work for yer backend crew. It:1. **Routin\u2019 the Traf\u2011blar** \u2013 Sails all incoming requests straight to the proper ship (micro\u2011service) without ye having to chart the course yourself.  2. **Guardin\u2019 the Gates** \u2013 Checks that every scallywag (client) has the proper pass (API keys, JWTs, or whatever shiver\u2011the\u2011timbers auth ye use) before lettin\u2019 'em aboard.  3. **Throwin\u2019 in the Spices** \u2013 Adds a bit of magic like rate\u2011limitin\u2019, throttlin\u2019, or caching so yer fleet doesn\u2019t get swamped by a squall of traffic.  4. **Speakin\u2019 One Tongue** \u2013 Transforms the gibberish of different services into a single, tidy language for your mates on the front end.  In short, it\u2019s the grumpy, no\u2011nonsense bouncer that keeps the API seas orderly and stops the riff-raff from wreckin\u2019 yer ship. Cap\u2019n, that\u2019s the whole shebang! Arrr!",
+      "score": 1.0,
+      "verdict": "PASS",
+      "reason": "The response correctly identifies routing as a main role and describes the gateway as a single point of entry (port-keeper/bouncer), satisfying both expected facts despite the pirate persona.",
+      "latency_sec": 0.028
+    }
+  ]
+}

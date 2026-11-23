@@ -1,0 +1,122 @@
+[
+  {
+    "id": "case_023",
+    "category": "jira_context",
+    "prompt": "Draft a one-line Slack status update for this Jira issue.",
+    "expected_keywords": ["PROJ-123", "IN PROGRESS"],
+    "actual_response": "PROJ\u2011123: Users experiencing login failures after v2.0 deployment; investigation underway.",
+    "judge_score": 0.5,
+    "judge_verdict": "FAIL",
+    "judge_reason": "The response includes the ticket ID but fails to explicitly state the status as 'IN PROGRESS', instead using the phrase 'investigation underway' which is semantically related but does not match the specific expected fact.",
+    "human_verdict": "PASS",
+    "human_notes": "Judge false negative: 'investigation underway' is a natural Slack phrasing for IN PROGRESS."
+  },
+  {
+    "id": "case_029",
+    "category": "cache_verification",
+    "prompt": "Explain what a REST API is in one sentence.",
+    "expected_keywords": ["HTTP", "stateless"],
+    "actual_response": "A REST API is a web interface that uses standard HTTP methods (GET, POST, PUT, DELETE, etc.) to manipulate resources identified by URLs, returning data in formats like JSON or XML.",
+    "judge_score": 0.5,
+    "judge_verdict": "FAIL",
+    "judge_reason": "The response correctly mentions HTTP but fails to include the required concept of 'statelessness'.",
+    "human_verdict": "PASS",
+    "human_notes": "Rubric mismatch + cache amplification: same valid answer passed case_001 (0.80) but failed here due to 2-keyword list."
+  },
+  {
+    "id": "case_035",
+    "category": "cache_verification",
+    "prompt": "Explain what a REST API is in a single sentence.",
+    "expected_keywords": ["HTTP", "stateless"],
+    "actual_response": "A REST API is a web interface that uses standard HTTP methods (GET, POST, PUT, DELETE, etc.) to manipulate resources identified by URLs, returning data in formats like JSON or XML.",
+    "judge_score": 0.5,
+    "judge_verdict": "FAIL",
+    "judge_reason": "The response correctly mentions HTTP but fails to include the required concept of 'statelessness'.",
+    "human_verdict": "PASS",
+    "human_notes": "Paraphrase cache hit of case_001; same rubric mismatch as case_029."
+  },
+  {
+    "id": "case_047",
+    "category": "prompt_version_v2",
+    "prompt": "Explain what a REST API is in one sentence.",
+    "expected_keywords": ["HTTP", "stateless", "resource"],
+    "actual_response": "A REST API be yer cursed, no\u2011frills, stateless ship that shovels data across the net, letting ye fetch, post, delete or update in one go\u2014no holdin\u2019 back, ye scurvy scrawl!",
+    "judge_score": 0.33,
+    "judge_verdict": "FAIL",
+    "judge_reason": "The response mentions 'stateless' but fails to explicitly mention 'HTTP' or 'resource', and the pirate-themed language obscures the technical definition.",
+    "human_verdict": "FAIL",
+    "human_notes": "Agree with judge: v2 pirate persona broke technical clarity and omitted HTTP/resources."
+  },
+  {
+    "id": "case_001",
+    "category": "standard_chat",
+    "prompt": "Explain what a REST API is in one sentence.",
+    "expected_keywords": ["HTTP", "stateless", "resource"],
+    "actual_response": "A REST API is a web interface that uses standard HTTP methods (GET, POST, PUT, DELETE, etc.) to manipulate resources identified by URLs, returning data in formats like JSON or XML.",
+    "judge_score": 0.8,
+    "judge_verdict": "PASS",
+    "judge_reason": "The response correctly identifies HTTP and resources, but omits the concept of statelessness.",
+    "human_verdict": "PASS",
+    "human_notes": "Agree: solid one-sentence definition covering HTTP methods and URL resources."
+  },
+  {
+    "id": "case_021",
+    "category": "jira_context",
+    "prompt": "Summarize the status of this ticket.",
+    "expected_keywords": ["PROJ-123", "IN PROGRESS"],
+    "actual_response": "Ticket PROJ\u2011123 is currently in progress, working to resolve the login failures that appeared after the v2.0 deployment.",
+    "judge_score": 1.0,
+    "judge_verdict": "PASS",
+    "judge_reason": "The response correctly identifies the ticket ID PROJ-123 and its status as in progress, matching the expected facts.",
+    "human_verdict": "PASS",
+    "human_notes": "Agree: accurate Jira context retrieval and summary."
+  },
+  {
+    "id": "case_030",
+    "category": "cache_verification",
+    "prompt": "How does gRPC differ from REST in one sentence?",
+    "expected_keywords": ["HTTP/2", "Protocol Buffers"],
+    "actual_response": "gRPC uses HTTP/2 and binary protocol buffers for efficient, strongly\u2011typed, bi\u2011directional streaming, whereas REST typically relies on HTTP/1.1 with text\u2011based JSON and stateless request/response patterns.",
+    "judge_score": 1.0,
+    "judge_verdict": "PASS",
+    "judge_reason": "The response correctly identifies HTTP/2 and Protocol Buffers as key differentiators for gRPC compared to REST.",
+    "human_verdict": "PASS",
+    "human_notes": "Agree: accurate cached answer."
+  },
+  {
+    "id": "case_041",
+    "category": "numeric_guardrail",
+    "prompt": "What does HTTP status code 404 mean in one sentence?",
+    "expected_keywords": ["404", "Not Found"],
+    "actual_response": "HTTP status code\u202f404 means the requested resource could not be found on the server.",
+    "judge_score": 1.0,
+    "judge_verdict": "PASS",
+    "judge_reason": "The response correctly identifies that HTTP status code 404 means the resource was not found.",
+    "human_verdict": "PASS",
+    "human_notes": "Agree: concise and accurate; numeric guardrail prevented cache collision."
+  },
+  {
+    "id": "case_048",
+    "category": "prompt_version_v2",
+    "prompt": "What is the main role of an API gateway?",
+    "expected_keywords": ["entry point", "routing", "requests"],
+    "actual_response": "Arrr, listen up, ye land\u2011lubber! The main role of an API gateway be a damn port\u2011keeper, a one\u2011stop pirate post that does all the hard work for yer backend crew. It:1. **Routin\u2019 the Traf\u2011blar** \u2013 Sails all incoming requests straight to the proper ship (micro\u2011service) without ye having to chart the course yourself.  2. **Guardin\u2019 the Gates** \u2013 Checks that every scallywag (client) has the proper pass (API keys, JWTs, or whatever shiver\u2011the\u2011timbers auth ye use) before lettin\u2019 'em aboard.  3. **Throwin\u2019 in the Spices** \u2013 Adds a bit of magic like rate\u2011limitin\u2019, throttlin\u2019, or caching so yer fleet doesn\u2019t get swamped by a squall of traffic.  4. **Speakin\u2019 One Tongue** \u2013 Transforms the gibberish of different services into a single, tidy language for your mates on the front end.  In short, it\u2019s the grumpy, no\u2011nonsense bouncer that keeps the API seas orderly and stops the riff-raff from wreckin\u2019 yer ship. Cap\u2019n, that\u2019s the whole shebang! Arrr!",
+    "judge_score": 1.0,
+    "judge_verdict": "PASS",
+    "judge_reason": "The response accurately covers the expected concepts of routing and handling requests, and implicitly describes the gateway as the entry point through its 'port-keeper' and 'bouncer' metaphors.",
+    "human_verdict": "PASS",
+    "human_notes": "Agree on factual accuracy, but noted judge blind spot: missed mild profanity ('damn') and gibberish ('Traf-blar') since rubric only checks facts."
+  },
+  {
+    "id": "case_002",
+    "category": "standard_chat",
+    "prompt": "How does gRPC differ from REST in one sentence?",
+    "expected_keywords": ["HTTP/2", "Protocol Buffers", "binary"],
+    "actual_response": "gRPC uses HTTP/2 and binary protocol buffers for efficient, strongly\u2011typed, bi\u2011directional streaming, whereas REST typically relies on HTTP/1.1 with text\u2011based JSON and stateless request/response patterns.",
+    "judge_score": 1.0,
+    "judge_verdict": "PASS",
+    "judge_reason": "The response accurately includes all expected facts: HTTP/2, Protocol Buffers, and binary format.",
+    "human_verdict": "PASS",
+    "human_notes": "Agree: complete and accurate."
+  }
+]
