@@ -76,6 +76,11 @@ class PromptRegistry:
         if active:
             return active.decode("utf-8")
         return "v1"
+    async def set_active_version(self, version: str) -> None:
+        if version not in self.registry:
+            raise ValueError(f"Prompt version '{version}' not found.")
+        await redis_client.set("prompt:active_version", version)
+        await redis_client.delete("prompt:canary")
 
 # --- THE FIX: Factory function to break circular imports ---
 _registry_instance: Optional[PromptRegistry] = None
