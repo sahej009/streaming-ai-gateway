@@ -1,10 +1,17 @@
 name: Canary Deployment Pipeline
 
-# Trigger this workflow only when code is pushed directly to the main branch
 on:
   push:
     branches:
       - main
+    paths:
+      - "app/**"
+      - "prompts/**"
+      - "Dockerfile"
+      - "docker-compose.yml"
+      - "requirements.txt"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
 
 jobs:
   deploy-canary:
@@ -14,76 +21,84 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 1. Start the Production Environment
       - name: Create Production .env
         run: |
           echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> .env
           echo "JWT_SECRET=super-secret-prod-key-99" >> .env
           echo "JWT_ALGORITHM=HS256" >> .env
+          echo "RATE_LIMIT_PER_MINUTE=60" >> .env
 
-      - name: Start Production Server
+      - name: Start Gateway & Wait for Readiness
         run: |
-          docker compose up -d
-          echo "Waiting for Gateway to boot..."
-          sleep 15
+          docker compose up -d --build app
+          echo "Waiting for gateway to warm up embedding model and bind port 8000..."
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8000/metrics > /dev/null; then
+              echo "✅ Gateway is ready!"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "❌ Gateway failed to start within 90s"
+          docker compose logs
+          exit 1
 
-      # 2. Trigger the Canary Route
-      # Note: We are simulating a deployment here by hitting the localhost API
-      # In a real cloud setup, you would hit your actual server IP
       - name: Route 10% Traffic to Canary
         run: |
           echo "🚀 Activating Canary Version (v2) at 10% weight..."
-
-          # Hit the admin endpoint we built in Phase 3
-          curl -X POST http://localhost:8000/admin/canary \
+          curl -sS --fail-with-body -X POST http://localhost:8000/admin/canary \
             -H "Content-Type: application/json" \
             -d '{"version": "v2", "weight": 0.10}'
-            
-          echo "Canary deployed successfully. Entering monitoring phase."
+          echo ""
+          echo "✅ Canary routing activated."
 
-      # 3. Monitor the Metrics (The Watchdog)
-      - name: Monitor Health for 5 Minutes
+      - name: Monitor Canary Health (Prometheus Watchdog)
         run: |
-          echo "⏱️ Monitoring Prometheus metrics for 5 minutes..."
+          echo "⏱️ Verifying canary state and Prometheus metrics..."
+          sleep 5
 
-          # We simulate the 5-minute wait by sleeping (in reality, you would ping the /metrics endpoint)
-          # We'll do 30 seconds for this test so you don't have to wait forever
-          sleep 30
+          # 1. Confirm canary config is active in Redis
+          CANARY_STATE=$(curl -sf http://localhost:8000/admin/prompts | jq -r '.canary_deployment.version // empty')
+          if [ "$CANARY_STATE" != "v2" ]; then
+            echo "❌ Expected active canary 'v2', got '${CANARY_STATE:-none}'!"
+            echo "HEALTHY=false" >> $GITHUB_ENV
+            exit 0
+          fi
 
-          # Ping the metrics endpoint to check for errors
-          METRICS=$(curl -s http://localhost:8000/metrics)
+          # 2. Confirm /metrics is reachable
+          if ! METRICS=$(curl -sf http://localhost:8000/metrics); then
+            echo "❌ Gateway /metrics endpoint is unreachable!"
+            echo "HEALTHY=false" >> $GITHUB_ENV
+            exit 0
+          fi
 
-          # Check if the metrics contain the hallucination score (simulating an error check)
-          if echo "$METRICS" | grep -q "hallucination_score"; then
-            echo "✅ Canary is healthy!"
-            echo "HEALTHY=true" >> $GITHUB_ENV
+          # 3. Sum all 5xx responses (matches both grouped status="5xx" and exact status="500".."599")
+          ERROR_5XX=$(echo "$METRICS" | awk '/^http_requests_total\{.*status="5(xx|[0-9][0-9])"/ {sum += $NF} END {printf "%.0f\n", sum + 0}')
+          echo "Observed 5xx count: $ERROR_5XX"
+
+          if [ "$ERROR_5XX" -gt 0 ]; then
+            echo "🚨 Detected $ERROR_5XX server errors during canary check!"
+            echo "HEALTHY=false" >> $GITHUB_ENV
           else
-            # For this test, it will likely be "healthy" since we aren't generating fake errors
-            echo "✅ Canary appears stable (no metrics threshold crossed)."
+            echo "✅ Canary is healthy (canary active in Redis, /metrics responding, 0 server errors)."
             echo "HEALTHY=true" >> $GITHUB_ENV
           fi
 
-      # 4a. Promote to 100% (If Healthy)
-      - name: Promote to Stable
+      - name: Promote Canary to 100%
         if: env.HEALTHY == 'true'
         run: |
-          echo "🟢 Canary passed health checks! Promoting to 100% traffic."
-
-          # Hit the active endpoint to lock it in
-          curl -X POST http://localhost:8000/admin/prompts/activate \
+          echo "🟢 Canary passed health checks! Promoting v2 to 100% traffic."
+          curl -sS --fail-with-body -X POST http://localhost:8000/admin/prompts/activate \
             -H "Content-Type: application/json" \
             -d '{"version": "v2"}'
-            
-          echo "Deployment complete."
+          echo ""
+          echo "✅ Deployment complete."
 
-      # 4b. Rollback (If Unhealthy)
       - name: Rollback Canary
         if: env.HEALTHY == 'false'
         run: |
           echo "🚨 Canary failed health checks! Initiating rollback..."
-
-          # Hit the delete endpoint to cancel the canary
-          curl -X DELETE http://localhost:8000/admin/canary
-
+          curl -sS --fail-with-body -X DELETE http://localhost:8000/admin/canary
+          echo ""
           echo "Rollback complete. Failing deployment."
           exit 1
