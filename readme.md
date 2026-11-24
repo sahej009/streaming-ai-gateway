@@ -12,7 +12,7 @@ An enterprise-grade, multi-transport (REST/SSE, WebSockets & gRPC) AI Gateway en
 
 _Below is a demonstration of the gateway streaming tokens in real-time while dynamically intercepting a Slack/Jira reference, securely fetching the context, and injecting it into the LLM prompt._
 
-![Slack Connector Demo](docs/slack_jira_demo.gif)
+![Slack Connector Demo](docs/Streaming Ai gateway.gif)
 
 ---
 
