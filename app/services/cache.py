@@ -18,7 +18,7 @@ def get_embedding_model():
     global _model
     if _model is None:
         print("🧠 Loading & warming up embedding model...")
-        _model = SentenceTransformer('all-MiniLM-L6-v2')
+        _model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
         _model.encode("warmup")
     return _model
 

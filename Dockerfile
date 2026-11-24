@@ -14,6 +14,10 @@ RUN pip install --default-timeout=1000 --retries 10 -r requirements.txt
 
 RUN pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.8.0/en_core_web_lg-3.8.0-py3-none-any.whl --default-timeout=1000 --retries 10
 
+# Pre-bake embedding weights into the image layer (cached across code edits)
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')"
+
+
 COPY . .
 
 CMD ["python", "-m", "app.main"]

@@ -46,6 +46,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["X-Cache", "X-Prompt-Version", "X-Context-Injected"],
 )
 
 # 👇 NEW: Custom Middleware for p95 Latency Tracking
